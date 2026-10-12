@@ -79,11 +79,11 @@
 | [frontend/e2e/](frontend/e2e/) | 城市配送与 GIS 浏览器回归 |
 | [artifacts/phase8a-screening/](artifacts/phase8a-screening/) | 初筛截图、请求结果和回归证据 |
 
-仓库还保留其他历史 Solution Pack 和制造业履约项目代码。城市配送作品的页面、计算服务、数据和证据以上述目录为准；历史代码和历史数据没有被删除或改写。
+本仓库仅保留城市配送作品及其运行、验证、数据来源与许可所需内容。两份公共三维文件仍位于 `frontend/src/features/logistics/`，由城市配送车厢直接使用；不包含旧物流页面或旧业务入口。
 
 ## macOS / Linux 本地运行
 
-需要 Node.js 24、Python 3.12 和 Chromium。
+建议使用 Node.js 24、Python 3.12。浏览器验收使用 WebKit（Safari 同源引擎），页面运行需要 WebGL。
 
 ```bash
 git clone https://github.com/yyy990045-sketch/city-delivery-intelligent-dispatch.git
@@ -91,7 +91,7 @@ cd city-delivery-intelligent-dispatch
 npm ci
 python3.12 -m venv tools/city-delivery-decision/.venv
 tools/city-delivery-decision/.venv/bin/python -m pip install -r tools/city-delivery-decision/requirements.txt
-npx playwright install chromium
+npx playwright install webkit
 ```
 
 启动后端：
@@ -103,7 +103,7 @@ PYTHONUTF8=1 tools/city-delivery-decision/.venv/bin/python tools/city-delivery-d
 另开终端启动前端：
 
 ```bash
-VITE_LOGISTICS_DIRECT=true npm run frontend:dev -- --host 127.0.0.1 --port 8111 --strictPort
+npm run frontend:dev
 ```
 
 打开 <http://127.0.0.1:8111/frontend/city-delivery/overview>。前后端均为本地演示服务，不需要地图密钥或在线地图服务；浏览器需要支持 WebGL。
@@ -119,8 +119,8 @@ tools/city-delivery-decision/.venv/bin/python tools/city-delivery-decision/verif
 tools/city-delivery-decision/.venv/bin/python tools/city-delivery-decision/verify_v3.py --output-dir /tmp/city-delivery-evidence
 tools/city-delivery-decision/.venv/bin/python tools/city-delivery-geo/verify_city_gis.py
 
-CITY_DELIVERY_PYTHON="$PWD/tools/city-delivery-decision/.venv/bin/python" npx playwright test --config frontend/playwright.city-delivery.config.ts
-CITY_DELIVERY_PYTHON="$PWD/tools/city-delivery-decision/.venv/bin/python" npx playwright test --config frontend/playwright.city-geo.config.ts
+CITY_DELIVERY_PYTHON="$PWD/tools/city-delivery-decision/.venv/bin/python" npm run frontend:e2e:city-delivery
+CITY_DELIVERY_PYTHON="$PWD/tools/city-delivery-decision/.venv/bin/python" npm run frontend:e2e:gis
 ```
 
 已有证据：[Phase 6 真实 3D 城市和同源路网](docs/competition/phase6-real-3d-gis.md)、[Phase 6 算法与 GIS 独立验收](docs/competition/phase6-algorithm-acceptance.md)、[Phase 7B 480 分钟路线时长修复](docs/competition/phase7b-max-route-duration.md)、[Phase 7B 边界与回归证据](docs/competition/phase7b-evidence/)、[Phase 8A 初筛截图和结果](artifacts/phase8a-screening/README.md)。
@@ -138,3 +138,7 @@ CITY_DELIVERY_PYTHON="$PWD/tools/city-delivery-decision/.venv/bin/python" npx pl
 两组浏览器检查应依次运行，避免同时写入默认测试输出目录。Linux 若缺少浏览器系统依赖，可使用 Playwright 的安装提示补齐。建议 Python 3.12；原 macOS 机器也已在 Python 3.9.6 / OR-Tools 9.11.4210 下完成运行验证。首次安装依赖需要联网，示例运行不依赖外部 AI API。
 
 本次比赛提交此 GitHub 仓库链接。仓库为私有，评委须获得访问权限；克隆时需使用已获授权的 GitHub 账号。这里的 localhost 链接只用于安装后的本地访问，不是在线部署地址。
+
+数据与模型授权：[许可记录](docs/open-source/license-audit.md)、[车辆模型](frontend/public/assets/models/LICENSE.md)、[离线 OSM 数据](frontend/public/demo/city-delivery/geo-city/v1/README.md)。项目整体许可证尚未选定，不把第三方授权描述为本项目已经开源。
+
+本轮仓库整理与独立运行结果：[清理清单、验证结果和六页新画面](docs/repository-cleanup.md)。

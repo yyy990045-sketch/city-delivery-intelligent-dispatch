@@ -58,7 +58,8 @@ test('六店完整主线：同一计划、确认、装卸、JSON 与可打印作
  const printable=await page.context().newPage();await printable.setContent(await readFile(htmlPath,'utf8'));
  await expect(printable.locator('[data-loading-cargo]')).toHaveCount(12);await expect(printable.locator('[data-unloading-stop]')).toHaveCount(6);
  await expect(printable.locator('body')).toContainText(result.scenarioFingerprint);
- await printable.pdf({path:info.outputPath('operation-plan.pdf'),format:'A4',printBackground:true});await printable.close();
+ // Keep the exported work sheet and all content checks; capture evidence without a Chromium-only PDF API.
+ await printable.screenshot({path:info.outputPath('operation-plan.png'),fullPage:true});await printable.close();
  await go(page,'优化效果');await expect(page.locator('[data-current-effects]')).toHaveAttribute('data-current-effects',result.planId);
  await expect(page.locator('.p-effects-lead')).toContainText('已确认');
  await expect(page.locator('.p-standard-current-grid')).toContainText('194.8');await expect(page.locator('.p-standard-current-grid')).toContainText('09:08');
