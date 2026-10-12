@@ -1,0 +1,2732 @@
+openapi: 3.0.3
+info:
+  title: Fulfillment Exception Pack API
+  version: 2.0.0
+  description: Local deterministic case/evidence API. Production uses a verified bearer token; demo headers are development-only.
+servers:
+  - url: http://127.0.0.1:3410
+security:
+  - bearerAuth: []
+paths:
+  /api/health:
+    get:
+      security: []
+      responses:
+        '200':
+          description: Service is alive
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/HealthResponse' } }
+  /api/v2/auth/me:
+    parameters:
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      summary: Current identity, roles, scopes and capability projection
+      description: >-
+        Backend-computed identity projection. The frontend must consume
+        `capabilities` instead of inferring canSubmit / canApprove / canExecute.
+        `scopes` is `["*"]` only for DEMO_ONLY_SUPERUSER identities.
+        Never returns JWTs, secrets, or authorization headers.
+      responses:
+        '200':
+          description: Identity projection
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/IdentityProjection' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/cases:
+    parameters:
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Case list
+          content:
+            application/json: { schema: { type: array, items: { $ref: '#/components/schemas/CaseSummary' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/cases/{id}:
+    parameters:
+      - { $ref: '#/components/parameters/CaseId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Case detail
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/CaseDetail' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/cases/{id}/report:
+    parameters:
+      - { $ref: '#/components/parameters/CaseId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Traceable case report
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/Report' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/cases/{id}/receipts:
+    parameters:
+      - { $ref: '#/components/parameters/CaseId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Durable external capability receipts
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [caseId, receipts]
+                properties:
+                  caseId: { type: string }
+                  receipts: { type: array, items: { $ref: '#/components/schemas/CapabilityReceipt' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/cases/{id}/refresh:
+    parameters:
+      - { $ref: '#/components/parameters/CaseId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RefreshRequest' }
+      responses:
+        '200':
+          description: Refreshed case and endpoint attempts
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/RefreshResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '502': { $ref: '#/components/responses/BadGateway' }
+  /api/cases/{id}/review:
+    parameters:
+      - { $ref: '#/components/parameters/CaseId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, properties: { reviews: { type: array, items: { $ref: '#/components/schemas/ConflictReviewInput' } }, conflictIds: { type: array, items: { type: string } } } }
+      responses:
+        '200':
+          description: Updated case
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/RuntimeCase' } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/cases/{id}/propose:
+    parameters:
+      - { $ref: '#/components/parameters/CaseId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    post:
+      responses:
+        '200':
+          description: Proposed case
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/RuntimeCase' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/cases/{id}/approve:
+    parameters:
+      - { $ref: '#/components/parameters/CaseId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    post:
+      responses:
+        '200':
+          description: Approved case
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/RuntimeCase' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/cases/{id}/execute:
+    parameters:
+      - { $ref: '#/components/parameters/CaseId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    post:
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { type: object, properties: { idempotencyKey: { type: string } } }
+      responses:
+        '200':
+          description: Executed case
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/RuntimeCase' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/cases/{id}/close:
+    parameters:
+      - { $ref: '#/components/parameters/CaseId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    post:
+      responses:
+        '200':
+          description: Closed case
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/RuntimeCase' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/cases/{id}/capabilities/{module}:
+    parameters:
+      - { $ref: '#/components/parameters/CaseId' }
+      - { $ref: '#/components/parameters/CapabilityModule' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Capability snapshot
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/CapabilitySnapshot' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - { $ref: '#/components/schemas/AdjudicationRequest' }
+                - { $ref: '#/components/schemas/SandboxRequest' }
+                - { $ref: '#/components/schemas/MoreCapabilityRequest' }
+      responses:
+        '200':
+          description: Capability result
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/CapabilityResponse' } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /api/eval:
+    get:
+      responses:
+        '200':
+          description: Synthetic evaluation result
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/EvalResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v2/contexts/{contextId}/replay:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Replayable V2 fulfillment context
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/V2ReplayResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/contexts/{contextId}/workbench:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Pure-query V2 manufacturing workbench projection
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/V2ManufacturingWorkbenchResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/demo/judge/manifest:
+    parameters:
+      - { name: contextId, in: query, required: false, schema: { type: string }, description: Defaults to the context carrying the main production-shortfall exception }
+      - { name: exceptionId, in: query, required: false, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: >-
+            Read-only judge acceptance projection of already-persisted facts (same document that
+            demo:judge writes to .preview/judge-demo/evidence.json). It creates no new data.
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/JudgeEvidenceManifest' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/analytics/operational:
+    parameters:
+      - { name: from, in: query, required: false, schema: { type: string, format: date-time } }
+      - { name: to, in: query, required: false, schema: { type: string, format: date-time } }
+      - { name: timeBasis, in: query, required: false, schema: { type: string, enum: [context_opened, exception_occurrence] } }
+      - { name: bucket, in: query, required: false, schema: { type: string, enum: [day, week, month] } }
+      - { name: contextType, in: query, required: false, schema: { type: string } }
+      - { name: exceptionCode, in: query, required: false, schema: { type: string } }
+      - { name: severity, in: query, required: false, schema: { type: string, enum: [low, medium, high, critical] } }
+      - { name: resolutionStatus, in: query, required: false, schema: { type: string, enum: [no_case, triaged, confirmed, proposed_draft, pending_approval, approved, executed, closed, rejected] } }
+      - { name: site, in: query, required: false, schema: { type: string }, description: Industrial UNS site dimension }
+      - { name: line, in: query, required: false, schema: { type: string }, description: Industrial UNS line dimension }
+      - { name: sourceSystem, in: query, required: false, schema: { type: string }, description: Source system dimension (ERP/MES/QMS/WMS/Finance/...) }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Pure-query cross-context Operational Intelligence projection
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/OperationalAnalyticsResponse' } }
+        '400':
+          description: Invalid analytics filter
+          content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v2/analytics/powerbi/embed-config:
+    get:
+      parameters:
+        - { $ref: '#/components/parameters/DemoTenantHeader' }
+        - { $ref: '#/components/parameters/DemoActorHeader' }
+      responses:
+        '200':
+          description: >-
+            Server-generated Power BI Embed Token configuration for the single configured
+            workspace/report. The current product tenant is the application-side authorization
+            boundary. Server-side Entra credentials and access token are never returned.
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/PowerBiEmbedConfig' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: >-
+            Forbidden. The error body disambiguates the two forbidden cases: scope_forbidden when
+            the caller lacks the analytics:read scope, and POWERBI_TENANT_FORBIDDEN when the
+            current product tenant is not bound to the configured Power BI report.
+          content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+        '502':
+          description: Power BI authentication, report lookup, or embed-token generation failed
+          content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+        '503':
+          description: Power BI environment configuration is incomplete
+          content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+  /api/v2/solution-packs:
+    get:
+      parameters:
+        - { $ref: '#/components/parameters/DemoTenantHeader' }
+        - { $ref: '#/components/parameters/DemoActorHeader' }
+      responses:
+        '200':
+          description: Code-packaged Solution Pack catalog
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/SolutionPackCatalog' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v2/solution-packs/installed:
+    get:
+      parameters:
+        - { $ref: '#/components/parameters/DemoTenantHeader' }
+        - { $ref: '#/components/parameters/DemoActorHeader' }
+      responses:
+        '200':
+          description: Installed Solution Packs for current tenant
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/SolutionPackInstalledList' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v2/solution-packs/{packId}:
+    parameters:
+      - { name: packId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Solution Pack manifest
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/SolutionPackManifestResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/solution-packs/{packId}/install:
+    parameters:
+      - { name: packId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    post:
+      requestBody:
+        required: false
+        content:
+          application/json: { schema: { type: object, additionalProperties: false } }
+      responses:
+        '200':
+          description: Idempotent Solution Pack installation
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/SolutionPackInstallationResponse' } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v2/connectors:
+    get:
+      responses:
+        '200':
+          description: Code-packaged Connector catalog
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [connectors]
+                properties:
+                  connectors: { type: array, items: { $ref: '#/components/schemas/ConnectorManifest' } }
+  /api/v2/connectors/installed:
+    parameters:
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Tenant Connector installations, secret values omitted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [installations]
+                properties:
+                  installations: { type: array, items: { type: object, additionalProperties: true } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v2/connectors/{connectorId}/install:
+    parameters:
+      - { name: connectorId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [installationId, config]
+              properties:
+                installationId: { type: string }
+                config: { type: object, additionalProperties: true }
+                secretRef: { type: string, pattern: '^[A-Z0-9_]+$' }
+      responses:
+        '200':
+          description: Connector installation without network call
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ConnectorInstallationResponse' } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/internal-work-items/{workItemId}/deliveries:
+    parameters:
+      - { name: workItemId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Connector outbox deliveries for an Internal Work Item
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [workItemId, deliveries]
+                properties:
+                  workItemId: { type: string }
+                  deliveries: { type: array, items: { $ref: '#/components/schemas/ConnectorDeliveryView' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [connectorInstallationId]
+              properties:
+                connectorInstallationId: { type: string }
+      responses:
+        '202':
+          description: Delivery enqueued to transactional outbox; no HTTP call performed
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ConnectorDeliveryView' } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v2/connectors/outbox/{outboxId}:
+    parameters:
+      - { name: outboxId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Connector outbox and receipt view
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ConnectorDeliveryView' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/connectors/outbox/{outboxId}/attempts:
+    parameters:
+      - { name: outboxId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Safe Connector delivery attempts
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [outboxId, attempts]
+                properties:
+                  outboxId: { type: string }
+                  attempts: { type: array, items: { $ref: '#/components/schemas/ConnectorDeliveryAttempt' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/contexts/{contextId}/pack-workbench:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Pure-query generic Solution Pack workbench
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/PackWorkbenchResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v2/contexts/{contextId}/exceptions:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Deterministic V2 fulfillment exception candidates
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/V2ExceptionResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/contexts/{contextId}/rule-evaluations:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Persisted V2 rule evaluation snapshots
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/V2RuleEvaluationsResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/contexts/{contextId}/evaluations/run:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    post:
+      responses:
+        '200':
+          description: Evaluate active rules and upsert stable exceptions
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/V2EvaluationRunResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/explanations:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Grounded AI explanation summaries for the exception
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/GroundedExplanationListResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      requestBody:
+        required: false
+        content:
+          application/json: { schema: { type: object, additionalProperties: false } }
+      responses:
+        '200':
+          description: Generated or idempotently reused grounded explanation
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/GroundedExplanationResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '502': { $ref: '#/components/responses/AIProviderFailure' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+        '504': { $ref: '#/components/responses/GatewayTimeout' }
+  /api/v2/outcome-definitions:
+    get:
+      parameters:
+        - { $ref: '#/components/parameters/DemoTenantHeader' }
+        - { $ref: '#/components/parameters/DemoActorHeader' }
+        - { name: exceptionCode, in: query, schema: { type: string } }
+      responses:
+        '200':
+          description: Enabled and historical Outcome Definitions
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [definitions]
+                properties:
+                  definitions: { type: array, items: { $ref: '#/components/schemas/OutcomeDefinition' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/outcome-evaluations:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Outcome Evaluation list
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/OutcomeEvaluationList' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [definitionId, evidenceIds]
+              properties:
+                definitionId: { type: string }
+                evidenceIds: { type: array, items: { type: string } }
+                resolutionCaseId: { type: string }
+                automationRunId: { type: string }
+      responses:
+        '200':
+          description: Evidence-backed deterministic Outcome Evaluation
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/OutcomeEvaluation' } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/outcome-evaluations/{outcomeEvaluationId}:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { name: outcomeEvaluationId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Outcome Evaluation detail
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/OutcomeEvaluation' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/explanations/{explanationId}:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { $ref: '#/components/parameters/GroundedExplanationId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Grounded AI explanation detail with stale status
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/GroundedExplanationResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/decision-recommendations:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Decision Recommendation summaries
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/DecisionRecommendationList' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      requestBody:
+        required: false
+        content:
+          application/json: { schema: { type: object, additionalProperties: false } }
+      responses:
+        '200':
+          description: Generated or idempotently reused Decision Recommendation
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/DecisionRecommendation' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '502': { $ref: '#/components/responses/AIProviderFailure' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+        '504': { $ref: '#/components/responses/GatewayTimeout' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/root-cause-analyses:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Root Cause Hypothesis summaries
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/RootCauseAnalysisList' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      requestBody:
+        required: false
+        content:
+          application/json: { schema: { type: object, additionalProperties: false } }
+      responses:
+        '200':
+          description: Generated or idempotently reused Root Cause Hypothesis analysis
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/RootCauseAnalysis' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '502': { $ref: '#/components/responses/AIProviderFailure' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+        '504': { $ref: '#/components/responses/GatewayTimeout' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/root-cause-analyses/{analysisId}:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { name: analysisId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Root Cause Hypothesis analysis detail with stale status
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/RootCauseAnalysis' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/root-cause-analyses/{analysisId}/hypotheses/{hypothesisId}/reviews:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { name: analysisId, in: path, required: true, schema: { type: string } }
+      - { name: hypothesisId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Append-only human reviews for a hypothesis
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/RootCauseHypothesisReviewList' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [decision, rationale]
+              properties:
+                decision: { type: string, enum: [investigate, needs_evidence, rejected] }
+                rationale: { type: string, minLength: 1 }
+      responses:
+        '200':
+          description: Append-only hypothesis review
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/RootCauseHypothesisReview' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/decision-recommendations/{recommendationId}:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { name: recommendationId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Decision Recommendation detail with stale status
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/DecisionRecommendation' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/decision-recommendations/{recommendationId}/dispositions:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { name: recommendationId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Human dispositions for a Decision Recommendation
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/DecisionRecommendationDispositionList' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [decision, rationale]
+              properties:
+                decision: { type: string, enum: [accepted, modified, rejected] }
+                selectedOptionId: { type: string }
+                rationale: { type: string, minLength: 1 }
+      responses:
+        '200':
+          description: Append-only human disposition
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/DecisionRecommendationDisposition' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/policy-evaluations:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Existing deterministic policy evaluations
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/PolicyEvaluationList' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  additionalProperties: false
+                  required: [actionType]
+                  properties:
+                    actionType: { type: string, enum: [supplement_evidence, urge_follow_up, reject_overclaim, route_quotation_to_review, approve_or_change_quotation_terms, create_task] }
+                - type: object
+                  additionalProperties: false
+                  required: [recommendationId, optionId]
+                  properties:
+                    recommendationId: { type: string }
+                    optionId: { type: string }
+      responses:
+        '200':
+          description: Deterministic policy evaluation; never auto-executes
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/PolicyEvaluation' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/policy-evaluations/{policyEvaluationId}/automation-readiness:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { name: policyEvaluationId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Pure automation readiness query
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/AutomationReadiness' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/policy-evaluations/{policyEvaluationId}/automation-runs:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { name: policyEvaluationId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Automation runs for a Policy Evaluation
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/AutomationRunList' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { type: object, additionalProperties: false } }
+      responses:
+        '200':
+          description: Idempotent policy-bounded internal automation execution
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/AutomationRunView' } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/policy-evaluations/{policyEvaluationId}/automation-runs/{runId}:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { name: policyEvaluationId, in: path, required: true, schema: { type: string } }
+      - { name: runId, in: path, required: true, schema: { type: string } }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Automation run detail
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/AutomationRunView' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/automation-runs:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Automation run list for an Exception
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/AutomationRunList' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/internal-work-items:
+    parameters:
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+      - { name: status, in: query, schema: { type: string, enum: [open, completed, cancelled] } }
+      - { name: kind, in: query, schema: { type: string, enum: [task, evidence_request] } }
+      - { name: contextId, in: query, schema: { type: string } }
+      - { name: exceptionId, in: query, schema: { type: string } }
+    get:
+      responses:
+        '200':
+          description: Read-only internal work item list
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/InternalWorkItemList' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/bundle:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Exception evidence bundle
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/V2ExceptionEvidenceBundle' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/auth/context:
+    parameters:
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Current authenticated or demo actor projected by the backend
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/CurrentActorContextResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/resolution-capabilities:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    get:
+      responses:
+        '200':
+          description: Backend-derived Resolution action capabilities and assignable owner roles
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ResolutionCapabilitiesResponse' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/contexts/{contextId}/exceptions/{exceptionId}/resolution-case:
+    parameters:
+      - { $ref: '#/components/parameters/V2ContextId' }
+      - { $ref: '#/components/parameters/V2ExceptionId' }
+      - { $ref: '#/components/parameters/DemoTenantHeader' }
+      - { $ref: '#/components/parameters/DemoActorHeader' }
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ResolutionAcceptanceRequest' }
+      responses:
+        '200':
+          description: Human acceptance mutation; creates a triaged Resolution Case and freezes intake lineage and Evidence references
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ResolutionCase' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /api/v2/contexts/{contextId}/resolution-cases:
+    get:
+      parameters:
+        - { $ref: '#/components/parameters/V2ContextId' }
+        - { $ref: '#/components/parameters/DemoTenantHeader' }
+        - { $ref: '#/components/parameters/DemoActorHeader' }
+      responses:
+        '200':
+          description: Resolution Case summaries for a V2 context
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ResolutionCaseListResponse' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/resolution-cases/{caseId}/review:
+    post:
+      parameters:
+        - { $ref: '#/components/parameters/ResolutionCaseId' }
+        - { $ref: '#/components/parameters/DemoTenantHeader' }
+        - { $ref: '#/components/parameters/DemoActorHeader' }
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: '#/components/schemas/ResolutionReviewRequest' } }
+      responses:
+        '200':
+          description: Human review mutation; confirm advances to confirmed, needs_evidence remains triaged, reject is terminal
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ResolutionCase' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v2/resolution-cases/{caseId}/propose:
+    post:
+      parameters:
+        - { $ref: '#/components/parameters/ResolutionCaseId' }
+        - { $ref: '#/components/parameters/DemoTenantHeader' }
+        - { $ref: '#/components/parameters/DemoActorHeader' }
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: '#/components/schemas/ResolutionProposalRequest' } }
+      responses:
+        '200':
+          description: Human proposal mutation; creates human-authored actions in draft status
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ResolutionCase' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v2/resolution-cases/{caseId}/submit:
+    post:
+      parameters:
+        - { $ref: '#/components/parameters/ResolutionCaseId' }
+        - { $ref: '#/components/parameters/DemoTenantHeader' }
+        - { $ref: '#/components/parameters/DemoActorHeader' }
+      responses:
+        '200':
+          description: Human submit mutation; actions become pending_approval while the outer Case remains proposed
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ResolutionCase' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v2/resolution-cases/{caseId}:
+    get:
+      parameters:
+        - { $ref: '#/components/parameters/ResolutionCaseId' }
+        - { $ref: '#/components/parameters/DemoTenantHeader' }
+        - { $ref: '#/components/parameters/DemoActorHeader' }
+      responses:
+        '200':
+          description: Resolution Case query with source drift and receipts
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ResolutionCaseQuery' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v2/resolution-cases/{caseId}/approve:
+    post:
+      parameters:
+        - { $ref: '#/components/parameters/ResolutionCaseId' }
+        - { $ref: '#/components/parameters/DemoTenantHeader' }
+        - { $ref: '#/components/parameters/DemoActorHeader' }
+      responses:
+        '200':
+          description: Auth-role and segregation-of-duties protected approval mutation
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ResolutionCase' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v2/resolution-cases/{caseId}/execute:
+    post:
+      parameters:
+        - { $ref: '#/components/parameters/ResolutionCaseId' }
+        - { $ref: '#/components/parameters/DemoTenantHeader' }
+        - { $ref: '#/components/parameters/DemoActorHeader' }
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { idempotencyKey: { type: string } }
+      responses:
+        '200':
+          description: Local-ledger demo execution; records idempotent receipts without calling a real ERP/WMS
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ResolutionCase' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v2/resolution-cases/{caseId}/close:
+    post:
+      parameters:
+        - { $ref: '#/components/parameters/ResolutionCaseId' }
+        - { $ref: '#/components/parameters/DemoTenantHeader' }
+        - { $ref: '#/components/parameters/DemoActorHeader' }
+      responses:
+        '200':
+          description: Receipt-gated verification and closure; the source Exception remains detected
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ResolutionCase' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+  parameters:
+    CaseId: { name: id, in: path, required: true, schema: { type: string } }
+    CapabilityModule: { name: module, in: path, required: true, schema: { type: string, enum: [workbench, monitor, ontology, adjudication, sandbox, actions, more] } }
+    V2ContextId: { name: contextId, in: path, required: true, schema: { type: string } }
+    V2ExceptionId: { name: exceptionId, in: path, required: true, schema: { type: string } }
+    GroundedExplanationId: { name: explanationId, in: path, required: true, schema: { type: string } }
+    ResolutionCaseId: { name: caseId, in: path, required: true, schema: { type: string } }
+    DemoTenantHeader:
+      name: x-tenant-id
+      in: header
+      required: false
+      description: Development-only tenant selector. Ignored when a bearer token supplies tenant_id.
+      schema: { type: string, example: demo-tenant }
+    DemoActorHeader:
+      name: x-actor
+      in: header
+      required: false
+      description: Development-only actor selector for demo writes. Production uses the bearer subject.
+      schema: { type: string, example: demo-operator }
+  responses:
+    Unauthorized:
+      description: Authentication required
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    Forbidden:
+      description: Tenant, scope, or role is not authorized
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    NotFound:
+      description: Resource not found
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    BadRequest:
+      description: Invalid request
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    Conflict:
+      description: State transition or review gate rejected
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    Unprocessable:
+      description: Invalid business data, grounding validation failure, or AI_PROVIDER_REFUSAL
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    BadGateway:
+      description: All evidence endpoints unavailable
+      content: { application/json: { schema: { $ref: '#/components/schemas/ErrorWithAttempts' } } }
+    AIProviderFailure:
+      description: Grounded AI provider failed or returned invalid structured output
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    ServiceUnavailable:
+      description: No grounded AI provider is configured for the current runtime mode
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    GatewayTimeout:
+      description: Grounded AI provider timed out
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+    ErrorWithAttempts:
+      allOf:
+        - { $ref: '#/components/schemas/Error' }
+        - type: object
+          properties:
+            attempts: { type: array, items: { $ref: '#/components/schemas/EvidenceSourceAttempt' } }
+    HealthResponse:
+      type: object
+      required: [ok]
+      properties: { ok: { type: boolean } }
+    CaseSummary:
+      type: object
+      required: [id, title, pack, ownerRole, status]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        pack: { type: string, enum: [fulfillment, it-ops] }
+        ownerRole: { type: string }
+        status: { type: string }
+    CaseDetail:
+      type: object
+      required: [gold, runtime]
+      properties:
+        gold: { type: object, additionalProperties: true }
+        runtime: { $ref: '#/components/schemas/RuntimeCase' }
+    RuntimeCase:
+      type: object
+      required: [id, tenantId, status, events, findings, actions]
+      properties:
+        id: { type: string }
+        tenantId: { type: string }
+        status: { type: string }
+        paused: { type: boolean }
+        pack: { type: object, additionalProperties: true }
+        findings: { type: array, items: { type: object, additionalProperties: true } }
+        actions: { type: array, items: { type: object, additionalProperties: true } }
+        events: { type: array, items: { type: object, additionalProperties: true } }
+        capabilityRecords: { type: array, items: { $ref: '#/components/schemas/CapabilityRecord' } }
+    Report:
+      type: object
+      additionalProperties: true
+    RefreshResponse:
+      type: object
+      required: [ok, selectedSourceId, attempts, runtime]
+      properties:
+        ok: { type: boolean }
+        selectedSourceId: { type: string }
+        attempts: { type: array, items: { $ref: '#/components/schemas/EvidenceSourceAttempt' } }
+        runtime: { $ref: '#/components/schemas/RuntimeCase' }
+    EvidenceSourceAttempt:
+      type: object
+      required: [endpointId, outcome, durationMs]
+      properties:
+        endpointId: { type: string }
+        status: { type: integer }
+        outcome: { type: string, enum: [selected, fallback, failed] }
+        errorCode: { type: string, enum: [timeout, network, http, invalid_csv, invalid_payload, empty] }
+        durationMs: { type: integer, minimum: 0 }
+        contentHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+    CapabilityRecord:
+      type: object
+      required: [action, status, actor, at]
+      properties:
+        action: { type: string, enum: [versions, review, outcome, audit] }
+        status: { type: string, enum: [recorded, pending] }
+        result: { type: string }
+        rationale: { type: string }
+        actor: { type: string }
+        at: { type: string, format: date-time }
+        receipt: { type: string }
+        externalRequestId: { type: string }
+        receiptSource: { type: string, enum: [local-ledger] }
+    CapabilityReceipt:
+      type: object
+      required: [tenantId, caseId, actionId, operationKey, externalRequestId, receipt, receiptSource, status, payloadHash, createdAt]
+      properties:
+        tenantId: { type: string }
+        caseId: { type: string }
+        actionId: { type: string }
+        operationKey: { type: string }
+        externalRequestId: { type: string }
+        receipt: { type: string }
+        receiptSource: { type: string, enum: [local-ledger] }
+        status: { type: string, enum: [succeeded, failed] }
+        payloadHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+        createdAt: { type: string, format: date-time }
+    CapabilitySnapshot:
+      type: object
+      required: [module, caseId]
+      properties:
+        module: { type: string }
+        caseId: { type: string }
+        records: { type: array, items: { $ref: '#/components/schemas/CapabilityRecord' } }
+        report: { type: object, additionalProperties: true }
+        actions: { type: array, items: { type: object, additionalProperties: true } }
+        scenarios: { type: array, items: { type: object, additionalProperties: true } }
+    CapabilityResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok: { type: boolean }
+        action: { type: string }
+        scenario: { type: string }
+        record: { $ref: '#/components/schemas/CapabilityRecord' }
+        runtime: { $ref: '#/components/schemas/RuntimeCase' }
+    EvalResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        contestCases: { type: integer }
+        fxCases: { type: integer }
+        failures: { type: array, items: { type: object, additionalProperties: true } }
+    V2ReplayResponse:
+      type: object
+      required: [context, entities, entityReferences, sourceSystems, documents, events, evidence]
+      properties:
+        context: { type: object, additionalProperties: true }
+        entities: { type: array, items: { type: object, additionalProperties: true } }
+        entityReferences: { type: array, items: { type: object, additionalProperties: true } }
+        sourceSystems: { type: array, items: { type: object, additionalProperties: true } }
+        documents: { type: array, items: { type: object, additionalProperties: true } }
+        events: { type: array, items: { type: object, additionalProperties: true } }
+        evidence: { type: array, items: { type: object, additionalProperties: true } }
+    V2ExceptionResponse:
+      type: object
+      required: [contextId, exceptions]
+      properties:
+        contextId: { type: string }
+        exceptions: { type: array, items: { type: object, additionalProperties: true } }
+    V2RuleEvaluationsResponse:
+      type: object
+      required: [contextId, evaluations]
+      properties:
+        contextId: { type: string }
+        evaluations: { type: array, items: { type: object, additionalProperties: true } }
+    V2EvaluationRunResponse:
+      type: object
+      required: [contextId, evaluations, exceptions]
+      properties:
+        contextId: { type: string }
+        evaluations: { type: array, items: { type: object, additionalProperties: true } }
+        exceptions: { type: array, items: { type: object, additionalProperties: true } }
+    V2ExceptionEvidenceBundle:
+      type: object
+      required: [id, tenantId, contextId, exceptionId, observations, evidenceIds, evidence, sourceDocuments, sourceSystems]
+      properties:
+        id: { type: string }
+        tenantId: { type: string }
+        contextId: { type: string }
+        exceptionId: { type: string }
+        observations: { type: object, additionalProperties: true }
+        evidenceIds: { type: array, items: { type: string } }
+        evidence: { type: array, items: { type: object, additionalProperties: true } }
+        sourceDocuments: { type: array, items: { type: object, additionalProperties: true } }
+        sourceSystems: { type: array, items: { type: object, additionalProperties: true } }
+    JudgeEvidenceManifest:
+      description: >-
+        Judge-facing acceptance manifest. Nested shapes are intentionally not exhaustively modelled
+        here; the authoritative producer is src/demo/judge/manifest.ts.
+      type: object
+      additionalProperties: true
+      required: [schemaVersion, generatedAt, scenario, businessQuestion, businessFacts, sources, uns, evidence, rule, governance, execution, outcome, ai, trace, truthBoundary, artifacts]
+      properties:
+        schemaVersion: { type: string }
+        generatedAt: { type: string, format: date-time }
+        scenario: { type: string }
+        scenarioLabel: { type: string }
+        businessQuestion: { type: string }
+        businessFacts:
+          type: object
+          additionalProperties: false
+          required: [orderedQuantity, productionCompletedQuantity, difference, unit]
+          properties:
+            orderedQuantity: { type: number }
+            productionCompletedQuantity: { type: number }
+            difference: { type: number }
+            unit: { type: string }
+        truthBoundary: { type: object, additionalProperties: true }
+    V2ManufacturingWorkbenchResponse:
+      type: object
+      required: [context, stats, thread, rules, exceptions, resolutionCases, truthfulness]
+      properties:
+        context: { type: object, additionalProperties: true }
+        industrial:
+          description: >-
+            Industrial semantic projection (ISA-95 space, multi-system provenance,
+            traceability chain). Null when the context has no UNS space binding.
+          type: object
+          additionalProperties: true
+          nullable: true
+        stats:
+          type: object
+          additionalProperties: true
+          required: [sourceSystems, entities, documents, events, evidence, ruleEvaluations, matchedRules, notMatchedRules, exceptions, resolutionCases]
+        thread: { type: array, items: { type: object, additionalProperties: true } }
+        rules: { type: array, items: { type: object, additionalProperties: true } }
+        exceptions:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+            required: [id, code, label, severity, status, governanceStage, metrics]
+            properties:
+              id: { type: string }
+              code: { type: string }
+              label: { type: string }
+              severity: { type: string, enum: [low, medium, high, critical] }
+              status: { type: string }
+              governanceStage: { $ref: '#/components/schemas/GovernanceStage' }
+              metrics: { type: object, additionalProperties: true }
+        resolutionCases:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+            required: [id, exceptionId, status, governanceStage, ownerRole]
+            properties:
+              id: { type: string }
+              exceptionId: { type: string }
+              status: { type: string }
+              governanceStage: { $ref: '#/components/schemas/GovernanceStage' }
+              ownerRole: { type: string }
+        truthfulness: { type: object, additionalProperties: true }
+        defaultExceptionId: { type: string, nullable: true }
+    SolutionPackManifest:
+      type: object
+      additionalProperties: false
+      required: [id, version, name, description, contextTypes, capabilities, compatibility]
+      properties:
+        id: { type: string }
+        version: { type: string }
+        name: { type: string }
+        description: { type: string }
+        contextTypes: { type: array, items: { type: string } }
+        capabilities:
+          type: object
+          additionalProperties: false
+          required: [rules, outcomes, presentation, decisionEligibility, demo]
+          properties:
+            rules: { type: boolean }
+            outcomes: { type: boolean }
+            presentation: { type: boolean }
+            decisionEligibility: { type: boolean }
+            demo: { type: boolean }
+        workbenchPath: { type: string }
+        compatibility:
+          type: object
+          additionalProperties: false
+          required: [coreApiVersion]
+          properties:
+            coreApiVersion: { type: string }
+    SolutionPackInstallation:
+      type: object
+      additionalProperties: false
+      required: [tenantId, packId, packVersion, status, manifestHash, config, installedBy, installedAt, updatedAt]
+      properties:
+        tenantId: { type: string }
+        packId: { type: string }
+        packVersion: { type: string }
+        status: { type: string, enum: [active, inactive] }
+        manifestHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+        config: { type: object, additionalProperties: true }
+        installedBy: { type: string }
+        installedAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    SolutionPackCatalog:
+      type: object
+      required: [packs]
+      properties:
+        packs:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [manifest, installed, supportedActions]
+            properties:
+              manifest: { $ref: '#/components/schemas/SolutionPackManifest' }
+              installed: { type: boolean }
+              supportedActions: { type: array, items: { $ref: '#/components/schemas/PackSupportedAction' } }
+    SolutionPackInstalledList:
+      type: object
+      required: [installations]
+      properties:
+        installations:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [installation, manifest, supportedActions, boundContexts]
+            properties:
+              installation: { $ref: '#/components/schemas/SolutionPackInstallation' }
+              manifest: { $ref: '#/components/schemas/SolutionPackManifest' }
+              supportedActions: { type: array, items: { $ref: '#/components/schemas/PackSupportedAction' } }
+              boundContexts: { type: array, items: { $ref: '#/components/schemas/PackBoundContext' } }
+    SolutionPackManifestResponse:
+      type: object
+      required: [manifest, supportedActions]
+      properties:
+        manifest: { $ref: '#/components/schemas/SolutionPackManifest' }
+        supportedActions: { type: array, items: { $ref: '#/components/schemas/PackSupportedAction' } }
+    SolutionPackInstallationResponse:
+      type: object
+      required: [installation, manifest, supportedActions]
+      properties:
+        installation: { $ref: '#/components/schemas/SolutionPackInstallation' }
+        manifest: { $ref: '#/components/schemas/SolutionPackManifest' }
+        supportedActions: { type: array, items: { $ref: '#/components/schemas/PackSupportedAction' } }
+    PackSupportedAction:
+      type: object
+      additionalProperties: false
+      required: [type, label]
+      properties:
+        type: { type: string, enum: [supplement_evidence, urge_follow_up, reject_overclaim, route_quotation_to_review, approve_or_change_quotation_terms, create_task] }
+        label: { type: string }
+    PackBoundContext:
+      type: object
+      additionalProperties: false
+      required: [contextId, businessKey, contextType, status, updatedAt, exceptionCount, resolutionCaseCount, workbenchPath]
+      properties:
+        contextId: { type: string }
+        businessKey: { type: string }
+        contextType: { type: string }
+        status: { type: string }
+        updatedAt: { type: string, format: date-time }
+        exceptionCount: { type: integer }
+        resolutionCaseCount: { type: integer }
+        workbenchPath: { type: string }
+    PackWorkbenchResponse:
+      type: object
+      additionalProperties: false
+      required: [pack, context, stats, thread, rules, exceptions, outcomes, truthfulness]
+      properties:
+        pack:
+          type: object
+          additionalProperties: false
+          required: [id, version, name, contextLabel, workbenchPath, supportedActions]
+          properties:
+            id: { type: string }
+            version: { type: string }
+            name: { type: string }
+            contextLabel: { type: string }
+            workbenchPath: { type: string }
+            supportedActions: { type: array, items: { $ref: '#/components/schemas/PackSupportedAction' } }
+        context:
+          type: object
+          additionalProperties: true
+        stats:
+          type: object
+          additionalProperties: false
+          required: [entities, evidence, ruleEvaluations, matchedRules, notMatchedRules, exceptions]
+          properties:
+            entities: { type: integer }
+            evidence: { type: integer }
+            ruleEvaluations: { type: integer }
+            matchedRules: { type: integer }
+            notMatchedRules: { type: integer }
+            exceptions: { type: integer }
+        thread:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [key, label, entityId, businessKey, facts, state]
+            properties:
+              key: { type: string }
+              label: { type: string }
+              entityId: { type: string }
+              businessKey: { type: string }
+              facts:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: false
+                  required: [key, label, field, value, valueType, evidenceId]
+                  properties:
+                    key: { type: string }
+                    label: { type: string }
+                    field: { type: string }
+                    value:
+                      anyOf:
+                        - { type: string }
+                        - { type: number }
+                    valueType: { type: string }
+                    evidenceId: { type: string }
+              state: { type: string, enum: [normal, exception] }
+        rules: { type: array, items: { type: object, additionalProperties: true } }
+        exceptions: { type: array, items: { type: object, additionalProperties: true } }
+        outcomes: { type: array, items: { $ref: '#/components/schemas/OutcomeEvaluation' } }
+        truthfulness:
+          type: object
+          additionalProperties: false
+          required: [syntheticDemoData, packBound, causalAttribution]
+          properties:
+            syntheticDemoData: { type: boolean }
+            packBound: { type: boolean }
+            causalAttribution: { type: boolean, enum: [false] }
+    ConnectorManifest:
+      type: object
+      additionalProperties: false
+      required: [id, version, name, description, direction, capabilities, audience, effects, compatibility]
+      properties:
+        id: { type: string }
+        version: { type: string }
+        name: { type: string }
+        description: { type: string }
+        direction: { type: string, enum: [inbound, outbound, bidirectional] }
+        capabilities: { type: array, items: { type: string } }
+        audience: { type: string, enum: [internal_operations, business_system, external_customer] }
+        effects:
+          type: object
+          additionalProperties: false
+          required: [customerFacing, financialMovement, legalEffect]
+          properties:
+            customerFacing: { type: boolean }
+            financialMovement: { type: boolean }
+            legalEffect: { type: boolean }
+        compatibility:
+          type: object
+          additionalProperties: false
+          required: [coreApiVersion]
+          properties:
+            coreApiVersion: { type: string }
+    ConnectorInstallation:
+      type: object
+      additionalProperties: false
+      required: [tenantId, id, connectorId, connectorVersion, status, manifestHash, config, installedBy, installedAt, updatedAt]
+      properties:
+        tenantId: { type: string }
+        id: { type: string }
+        connectorId: { type: string }
+        connectorVersion: { type: string }
+        status: { type: string, enum: [active, inactive] }
+        manifestHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+        config: { type: object, additionalProperties: true }
+        secretRef: { type: string }
+        secretConfigured: { type: boolean }
+        installedBy: { type: string }
+        installedAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    ConnectorInstallationResponse:
+      type: object
+      required: [installation, manifest]
+      properties:
+        installation: { $ref: '#/components/schemas/ConnectorInstallation' }
+        manifest: { $ref: '#/components/schemas/ConnectorManifest' }
+    ConnectorOutboxItem:
+      type: object
+      additionalProperties: false
+      required: [tenantId, id, connectorInstallationId, workItemId, contextId, exceptionId, capability, operationKey, payload, status, attemptCount, availableAt, createdAt, updatedAt]
+      properties:
+        tenantId: { type: string }
+        id: { type: string }
+        connectorInstallationId: { type: string }
+        workItemId: { type: string }
+        contextId: { type: string }
+        exceptionId: { type: string }
+        capability: { type: string }
+        operationKey: { type: string, pattern: '^[a-f0-9]{64}$' }
+        payload: { type: object, additionalProperties: true }
+        status: { type: string, enum: [pending, in_flight, succeeded, failed, dead_letter] }
+        attemptCount: { type: integer }
+        availableAt: { type: string, format: date-time }
+        leaseOwner: { type: string }
+        leaseExpiresAt: { type: string, format: date-time }
+        lastErrorCode: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    ConnectorDeliveryAttempt:
+      type: object
+      additionalProperties: false
+      required: [tenantId, id, outboxId, attemptNumber, workerId, startedAt, completedAt, status]
+      properties:
+        tenantId: { type: string }
+        id: { type: string }
+        outboxId: { type: string }
+        attemptNumber: { type: integer }
+        workerId: { type: string }
+        startedAt: { type: string, format: date-time }
+        completedAt: { type: string, format: date-time }
+        status: { type: string, enum: [succeeded, retryable_failure, permanent_failure] }
+        httpStatus: { type: integer }
+        errorCode: { type: string }
+        responseHash: { type: string }
+    ConnectorReceipt:
+      type: object
+      additionalProperties: false
+      required: [tenantId, id, outboxId, externalRequestId, receiptSource, status, payloadHash, createdAt]
+      properties:
+        tenantId: { type: string }
+        id: { type: string }
+        outboxId: { type: string }
+        externalRequestId: { type: string }
+        externalResourceId: { type: string }
+        receiptSource: { type: string }
+        status: { type: string, enum: [succeeded, failed] }
+        payloadHash: { type: string }
+        createdAt: { type: string, format: date-time }
+    ConnectorDeliveryView:
+      type: object
+      additionalProperties: false
+      required: [outbox, attempts]
+      properties:
+        outbox: { $ref: '#/components/schemas/ConnectorOutboxItem' }
+        attempts: { type: array, items: { $ref: '#/components/schemas/ConnectorDeliveryAttempt' } }
+        receipt: { $ref: '#/components/schemas/ConnectorReceipt' }
+    PowerBiEmbedConfig:
+      type: object
+      additionalProperties: false
+      required: [configured, reportId, embedUrl, embedToken, tokenType, expiresAt]
+      properties:
+        configured: { type: boolean, enum: [true] }
+        reportId: { type: string }
+        embedUrl: { type: string }
+        embedToken: { type: string }
+        tokenType: { type: string, enum: [Embed] }
+        expiresAt: { type: string, format: date-time }
+        datasetId: { type: string }
+    OperationalAnalyticsResponse:
+      type: object
+      required: [window, summary, exceptionTrend, exceptionBreakdown, severityBreakdown, resolutionFunnel, rulePerformance, actionBreakdown, sourceSystemInvolvement, contexts, outcomes, metricDefinitions, truthfulness]
+      properties:
+        window:
+          type: object
+          required: [from, to, bucket, timeBasis, trendTimeBasis]
+          additionalProperties: false
+          properties:
+            from: { type: string, nullable: true }
+            to: { type: string, nullable: true }
+            bucket: { type: string, enum: [day, week, month] }
+            timeBasis: { type: string, enum: [context_opened, exception_occurrence] }
+            trendTimeBasis: { type: string, enum: [exception_occurrence] }
+        summary:
+          type: object
+          required: [contextCount, ruleEvaluationCount, matchedRuleEvaluationCount, notMatchedRuleEvaluationCount, detectedExceptionCount, exceptionsWithResolutionCase, exceptionsWithoutResolutionCase, resolutionCaseCount, closedResolutionCaseCount, rejectedResolutionCaseCount, receiptCount, actionCount, verifiedActionCount, governanceCoverageRate, resolutionClosureRate]
+          additionalProperties: false
+          properties:
+            contextCount: { type: integer }
+            ruleEvaluationCount: { type: integer }
+            matchedRuleEvaluationCount: { type: integer }
+            notMatchedRuleEvaluationCount: { type: integer }
+            detectedExceptionCount: { type: integer }
+            exceptionsWithResolutionCase: { type: integer }
+            exceptionsWithoutResolutionCase: { type: integer }
+            resolutionCaseCount: { type: integer }
+            closedResolutionCaseCount: { type: integer }
+            rejectedResolutionCaseCount: { type: integer }
+            receiptCount: { type: integer }
+            actionCount: { type: integer }
+            verifiedActionCount: { type: integer }
+            governanceCoverageRate: { type: number, nullable: true }
+            resolutionClosureRate: { type: number, nullable: true }
+        exceptionTrend:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [bucket, label, from, to, exceptionCount, contextsWithException]
+            properties:
+              bucket: { type: string }
+              label: { type: string }
+              from: { type: string, format: date-time }
+              to: { type: string, format: date-time }
+              exceptionCount: { type: integer }
+              contextsWithException: { type: integer }
+        exceptionBreakdown:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [code, label, count, severityBreakdown, contextsInvolved, resolutionCaseCount, closedResolutionCaseCount]
+            properties:
+              code: { type: string }
+              label: { type: string }
+              count: { type: integer }
+              severityBreakdown: { type: object, additionalProperties: true }
+              contextsInvolved: { type: array, items: { type: string } }
+              resolutionCaseCount: { type: integer }
+              closedResolutionCaseCount: { type: integer }
+        severityBreakdown:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [severity, count]
+            properties:
+              severity: { type: string, enum: [low, medium, high, critical] }
+              count: { type: integer }
+        resolutionFunnel:
+          type: object
+          required: [no_case, triaged, confirmed, proposed_draft, pending_approval, approved, executed, closed, rejected]
+          additionalProperties: false
+          properties:
+            no_case: { type: integer }
+            triaged: { type: integer }
+            confirmed: { type: integer }
+            proposed_draft: { type: integer }
+            pending_approval: { type: integer }
+            approved: { type: integer }
+            executed: { type: integer }
+            closed: { type: integer }
+            rejected: { type: integer }
+        rulePerformance:
+          type: array
+          items:
+            type: object
+            required: [ruleId, code, label, evaluations, matched, notMatched, triggerRate]
+            properties:
+              ruleId: { type: string }
+              code: { type: string }
+              label: { type: string }
+              evaluations: { type: integer }
+              matched: { type: integer }
+              notMatched: { type: integer }
+              triggerRate: { type: number, nullable: true }
+        actionBreakdown:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [type, total, draft, pending_approval, authorized, succeeded, verified, failed]
+            properties:
+              type: { type: string, enum: [supplement_evidence, urge_follow_up, reject_overclaim, route_quotation_to_review, approve_or_change_quotation_terms, review_quotation, create_task] }
+              total: { type: integer }
+              draft: { type: integer }
+              pending_approval: { type: integer }
+              authorized: { type: integer }
+              succeeded: { type: integer }
+              verified: { type: integer }
+              failed: { type: integer }
+        sourceSystemInvolvement:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [sourceSystemId, name, systemType, involvedExceptionCount]
+            properties:
+              sourceSystemId: { type: string }
+              name: { type: string }
+              systemType: { type: string }
+              involvedExceptionCount: { type: integer }
+        industrialBreakdown:
+          description: Exception counts by industrial dimension (site / line / sourceSystem)
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [dimension, value, exceptionCount, contextCount]
+            properties:
+              dimension: { type: string, enum: [site, line, sourceSystem] }
+              value: { type: string }
+              exceptionCount: { type: integer }
+              contextCount: { type: integer }
+        contexts:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [contextId, businessKey, contextType, status, openedAt, ruleEvaluationCount, exceptionCount, exceptionCodes, resolutionCaseCount, resolutionStatuses, resolutionOwnerRoles, highestSeverity, latestChangeAt, outcomeMeasurementCount, outcomeStatuses, sourceSystemIds, industrial]
+            properties:
+              contextId: { type: string }
+              businessKey: { type: string }
+              contextType: { type: string }
+              status: { type: string }
+              openedAt: { type: string, format: date-time }
+              ruleEvaluationCount: { type: integer }
+              exceptionCount: { type: integer }
+              exceptionCodes: { type: array, items: { type: string } }
+              resolutionCaseCount: { type: integer }
+              resolutionStatuses: { type: array, items: { type: string } }
+              resolutionOwnerRoles: { type: array, items: { type: string } }
+              highestSeverity: { type: string, nullable: true, enum: [low, medium, high, critical] }
+              latestChangeAt: { type: string, format: date-time }
+              outcomeMeasurementCount: { type: integer }
+              outcomeStatuses: { type: array, items: { type: string } }
+              industrial:
+                description: Industrial UNS space of this context; null when unbound
+                type: object
+                nullable: true
+                additionalProperties: false
+                required: [enterpriseId, siteId, areaId, lineId]
+                properties:
+                  enterpriseId: { type: string }
+                  siteId: { type: string }
+                  areaId: { type: string }
+                  lineId: { type: string }
+              sourceSystemIds: { type: array, items: { type: string } }
+        metricDefinitions:
+          type: object
+          additionalProperties: false
+          required: [governanceCoverageRate, resolutionClosureRate, ruleTriggerRate, exceptionOccurrenceAt, sourceSystemInvolvement, outcomeMeasurementCoverage, observedTargetMetRate]
+          properties:
+            governanceCoverageRate: { type: string }
+            resolutionClosureRate: { type: string }
+            ruleTriggerRate: { type: string }
+            exceptionOccurrenceAt: { type: string }
+            sourceSystemInvolvement: { type: string }
+            outcomeMeasurementCoverage: { type: string }
+            observedTargetMetRate: { type: string }
+        outcomes: { $ref: '#/components/schemas/OutcomeAnalyticsSummary' }
+        truthfulness:
+          type: object
+          additionalProperties: false
+          required: [derivedFromDomainFacts, realBusinessOutcomeMeasured, financialImpactMeasured, ruleAccuracyMeasured, aiDecisionQualityMeasured, realExternalExecutionMeasured]
+          properties:
+            derivedFromDomainFacts: { type: boolean }
+            realBusinessOutcomeMeasured: { type: boolean }
+            financialImpactMeasured: { type: boolean }
+            ruleAccuracyMeasured: { type: boolean }
+            aiDecisionQualityMeasured: { type: boolean }
+            realExternalExecutionMeasured: { type: boolean }
+    GroundedExplanation:
+      type: object
+      required: [id, tenantId, contextId, exceptionId, ruleEvaluationId, inputSnapshotHash, provider, model, status, output, validation, createdBy, createdAt]
+      properties:
+        id: { type: string }
+        tenantId: { type: string }
+        contextId: { type: string }
+        exceptionId: { type: string }
+        ruleEvaluationId: { type: string }
+        inputSnapshotHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+        provider: { type: string }
+        model: { type: string }
+        status: { type: string, enum: [generated, rejected] }
+        output: { type: object, additionalProperties: true }
+        validation: { type: object, additionalProperties: true }
+        createdBy: { type: string }
+        createdAt: { type: string, format: date-time }
+    GroundedExplanationSummary:
+      type: object
+      required: [id, tenantId, contextId, exceptionId, ruleEvaluationId, inputSnapshotHash, provider, model, status, createdBy, createdAt, stale]
+      additionalProperties: true
+    GroundedExplanationResponse:
+      type: object
+      required: [explanation, stale]
+      properties:
+        explanation: { $ref: '#/components/schemas/GroundedExplanation' }
+        stale: { type: boolean }
+    GroundedExplanationListResponse:
+      type: object
+      required: [contextId, exceptionId, explanations]
+      properties:
+        contextId: { type: string }
+        exceptionId: { type: string }
+        explanations: { type: array, items: { $ref: '#/components/schemas/GroundedExplanationSummary' } }
+    RootCauseHypothesis:
+      type: object
+      additionalProperties: false
+      required: [id, statement, epistemicStatus, supportingEvidenceIds, contradictingEvidenceIds, missingEvidence, verificationSteps]
+      properties:
+        id: { type: string }
+        statement: { type: string }
+        epistemicStatus: { type: string, enum: [hypothesis] }
+        supportingEvidenceIds: { type: array, items: { type: string } }
+        contradictingEvidenceIds: { type: array, items: { type: string } }
+        missingEvidence: { type: array, items: { type: string } }
+        verificationSteps: { type: array, items: { type: string } }
+    RootCauseValidation:
+      type: object
+      additionalProperties: false
+      required: [valid, citationErrors, numericErrors, unsupportedClaims, schemaErrors, validatedAt]
+      properties:
+        valid: { type: boolean }
+        citationErrors: { type: array, items: { type: string } }
+        numericErrors: { type: array, items: { type: string } }
+        unsupportedClaims: { type: array, items: { type: string } }
+        schemaErrors: { type: array, items: { type: string } }
+        validatedAt: { type: string, format: date-time }
+    RootCauseAnalysisSummary:
+      type: object
+      additionalProperties: false
+      required: [id, tenantId, contextId, exceptionId, ruleEvaluationId, inputSnapshotHash, provider, model, status, createdBy, createdAt, stale]
+      properties:
+        id: { type: string }
+        tenantId: { type: string }
+        contextId: { type: string }
+        exceptionId: { type: string }
+        ruleEvaluationId: { type: string }
+        inputSnapshotHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+        provider: { type: string }
+        model: { type: string }
+        status: { type: string, enum: [generated, rejected] }
+        createdBy: { type: string }
+        createdAt: { type: string, format: date-time }
+        stale: { type: boolean }
+    RootCauseAnalysis:
+      type: object
+      additionalProperties: false
+      required: [id, tenantId, contextId, exceptionId, ruleEvaluationId, inputSnapshotHash, provider, model, status, output, validation, createdBy, createdAt, stale]
+      properties:
+        id: { type: string }
+        tenantId: { type: string }
+        contextId: { type: string }
+        exceptionId: { type: string }
+        ruleEvaluationId: { type: string }
+        inputSnapshotHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+        provider: { type: string }
+        model: { type: string }
+        status: { type: string, enum: [generated, rejected] }
+        output:
+          type: object
+          additionalProperties: false
+          required: [summary, hypotheses, uncertainties, humanVerificationRequired, prohibitedConclusions]
+          properties:
+            summary: { type: string }
+            hypotheses: { type: array, minItems: 1, maxItems: 3, items: { $ref: '#/components/schemas/RootCauseHypothesis' } }
+            uncertainties: { type: array, items: { type: string } }
+            humanVerificationRequired: { type: boolean, enum: [true] }
+            prohibitedConclusions: { type: array, items: { type: string } }
+        validation: { $ref: '#/components/schemas/RootCauseValidation' }
+        stale: { type: boolean }
+        createdBy: { type: string }
+        createdAt: { type: string, format: date-time }
+    RootCauseAnalysisList:
+      type: object
+      required: [contextId, exceptionId, analyses]
+      properties:
+        contextId: { type: string }
+        exceptionId: { type: string }
+        analyses: { type: array, items: { $ref: '#/components/schemas/RootCauseAnalysisSummary' } }
+    RootCauseHypothesisReview:
+      type: object
+      additionalProperties: false
+      required: [id, tenantId, analysisId, hypothesisId, exceptionId, decision, rationale, actor, createdAt]
+      properties:
+        id: { type: string }
+        tenantId: { type: string }
+        analysisId: { type: string }
+        hypothesisId: { type: string }
+        exceptionId: { type: string }
+        decision: { type: string, enum: [investigate, needs_evidence, rejected] }
+        rationale: { type: string }
+        actor: { type: string }
+        createdAt: { type: string, format: date-time }
+    RootCauseHypothesisReviewList:
+      type: object
+      required: [analysisId, hypothesisId, reviews]
+      properties:
+        analysisId: { type: string }
+        hypothesisId: { type: string }
+        reviews: { type: array, items: { $ref: '#/components/schemas/RootCauseHypothesisReview' } }
+    DecisionRecommendationSupportingFact:
+      type: object
+      additionalProperties: false
+      required: [kind, key, value, evidenceIds]
+      properties:
+        kind: { type: string, enum: [expected, actual, metric, source_fact] }
+        key: { type: string }
+        value:
+          anyOf:
+            - { type: string }
+            - { type: number }
+        evidenceIds: { type: array, items: { type: string } }
+    DecisionRecommendationHistoryClaim:
+      type: object
+      additionalProperties: false
+      required: [key, value, statement]
+      properties:
+        key: { type: string }
+        value:
+          anyOf:
+            - { type: string }
+            - { type: number }
+        statement: { type: string }
+    DecisionRecommendationValidation:
+      type: object
+      additionalProperties: false
+      required: [valid, citationErrors, numericErrors, historyErrors, eligibilityErrors, unsupportedClaims, schemaErrors, validatedAt]
+      properties:
+        valid: { type: boolean }
+        citationErrors: { type: array, items: { type: string } }
+        numericErrors: { type: array, items: { type: string } }
+        historyErrors: { type: array, items: { type: string } }
+        eligibilityErrors: { type: array, items: { type: string } }
+        unsupportedClaims: { type: array, items: { type: string } }
+        schemaErrors: { type: array, items: { type: string } }
+        validatedAt: { type: string, format: date-time }
+    DecisionRecommendationOption:
+      type: object
+      additionalProperties: false
+      required: [id, actionType, title, actionSummary, rationale, evidenceIds, supportingFacts, historyClaims, assumptions, missingEvidence]
+      properties:
+        id: { type: string }
+        actionType: { type: string, enum: [supplement_evidence, urge_follow_up, reject_overclaim, route_quotation_to_review, approve_or_change_quotation_terms, create_task] }
+        title: { type: string }
+        actionSummary: { type: string }
+        rationale: { type: string }
+        evidenceIds: { type: array, items: { type: string } }
+        supportingFacts: { type: array, items: { $ref: '#/components/schemas/DecisionRecommendationSupportingFact' } }
+        historyClaims: { type: array, items: { $ref: '#/components/schemas/DecisionRecommendationHistoryClaim' } }
+        assumptions: { type: array, items: { type: string } }
+        missingEvidence: { type: array, items: { type: string } }
+    DecisionRecommendationSummary:
+      type: object
+      additionalProperties: false
+      required: [id, tenantId, contextId, exceptionId, ruleEvaluationId, inputSnapshotHash, provider, model, status, createdBy, createdAt, stale]
+      properties:
+        id: { type: string }
+        tenantId: { type: string }
+        contextId: { type: string }
+        exceptionId: { type: string }
+        ruleEvaluationId: { type: string }
+        inputSnapshotHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+        provider: { type: string }
+        model: { type: string }
+        status: { type: string, enum: [generated, rejected] }
+        createdBy: { type: string }
+        createdAt: { type: string, format: date-time }
+        stale: { type: boolean }
+    DecisionRecommendation:
+      type: object
+      additionalProperties: false
+      required: [id, tenantId, contextId, exceptionId, ruleEvaluationId, inputSnapshotHash, provider, model, status, output, validation, historySnapshot, eligibility, createdBy, createdAt, stale]
+      properties:
+        id: { type: string }
+        tenantId: { type: string }
+        contextId: { type: string }
+        exceptionId: { type: string }
+        ruleEvaluationId: { type: string }
+        inputSnapshotHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+        provider: { type: string }
+        model: { type: string }
+        status: { type: string, enum: [generated, rejected] }
+        output:
+          type: object
+          required: [executiveSummary, recommendedOptionId, options, uncertainties, humanDecisionRequired, prohibitedConclusions]
+          properties:
+            executiveSummary: { type: string }
+            recommendedOptionId: { type: string }
+            options: { type: array, minItems: 1, maxItems: 3, items: { $ref: '#/components/schemas/DecisionRecommendationOption' } }
+            uncertainties: { type: array, items: { type: string } }
+            humanDecisionRequired: { type: boolean, enum: [true] }
+            prohibitedConclusions: { type: array, items: { type: string } }
+        validation: { $ref: '#/components/schemas/DecisionRecommendationValidation' }
+        historySnapshot:
+          type: object
+          additionalProperties: false
+          required: [sameExceptionCount, sameExceptionWithResolutionCount, actionTypeCounts, resolutionStatusCounts, closedResolutionCaseCount, rejectedResolutionCaseCount, outcomeMeasured]
+          properties:
+            sameExceptionCount: { type: integer, minimum: 0 }
+            sameExceptionWithResolutionCount: { type: integer, minimum: 0 }
+            actionTypeCounts:
+              type: object
+              additionalProperties: false
+              required: [supplement_evidence, urge_follow_up, reject_overclaim, route_quotation_to_review, approve_or_change_quotation_terms, review_quotation, create_task]
+              properties:
+                supplement_evidence: { type: integer, minimum: 0 }
+                urge_follow_up: { type: integer, minimum: 0 }
+                reject_overclaim: { type: integer, minimum: 0 }
+                route_quotation_to_review: { type: integer, minimum: 0 }
+                approve_or_change_quotation_terms: { type: integer, minimum: 0 }
+                review_quotation: { type: integer, minimum: 0 }
+                create_task: { type: integer, minimum: 0 }
+            resolutionStatusCounts: { type: object, additionalProperties: { type: integer, minimum: 0 } }
+            closedResolutionCaseCount: { type: integer, minimum: 0 }
+            rejectedResolutionCaseCount: { type: integer, minimum: 0 }
+            outcomeMeasured: { type: boolean, enum: [false] }
+        eligibility:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [actionType, eligible, reason]
+            properties:
+              actionType: { type: string, enum: [supplement_evidence, urge_follow_up, reject_overclaim, route_quotation_to_review, approve_or_change_quotation_terms, create_task] }
+              eligible: { type: boolean }
+              reason: { type: string }
+        stale: { type: boolean }
+        createdBy: { type: string }
+        createdAt: { type: string, format: date-time }
+    DecisionRecommendationList:
+      type: object
+      required: [contextId, exceptionId, recommendations]
+      properties:
+        contextId: { type: string }
+        exceptionId: { type: string }
+        recommendations: { type: array, items: { $ref: '#/components/schemas/DecisionRecommendationSummary' } }
+    PolicyActionMetadata:
+      type: object
+      additionalProperties: false
+      required: [actionType, effectClass, customerFacing, financialMovement, legalEffect, reversible, humanReviewTransition, requiresApprovalBeforeExecution, materialBusinessEffect]
+      properties:
+        actionType: { type: string, enum: [supplement_evidence, urge_follow_up, reject_overclaim, route_quotation_to_review, approve_or_change_quotation_terms, review_quotation, create_task] }
+        effectClass: { type: string, enum: [internal_task, internal_evidence_request, external_communication, internal_review, commercial_decision, customer_decision] }
+        customerFacing: { type: boolean }
+        financialMovement: { type: boolean }
+        legalEffect: { type: boolean }
+        reversible: { type: boolean }
+        humanReviewTransition: { type: boolean }
+        requiresApprovalBeforeExecution: { type: boolean }
+        materialBusinessEffect: { type: boolean }
+    PolicyContextFacts:
+      type: object
+      additionalProperties: false
+      required: [exceptionCode, severity, actionType, evidenceCount, sourceSystemCount, hasClaimEvidence, allEvidenceSupported, candidateSource]
+      properties:
+        exceptionCode: { type: string }
+        severity: { type: string, enum: [low, medium, high, critical] }
+        actionType: { type: string, enum: [supplement_evidence, urge_follow_up, reject_overclaim, route_quotation_to_review, approve_or_change_quotation_terms, review_quotation, create_task] }
+        evidenceCount: { type: integer, minimum: 0 }
+        sourceSystemCount: { type: integer, minimum: 0 }
+        hasClaimEvidence: { type: boolean }
+        allEvidenceSupported: { type: boolean }
+        candidateSource: { type: string, enum: [human, ai_recommendation] }
+    PolicyEvaluationDecision:
+      type: object
+      additionalProperties: false
+      required: [mode, matchedPolicyIds, reasons, requiredRoles, actionMetadata, facts, policySnapshotHash, automationAvailable, executionPerformed]
+      properties:
+        mode: { type: string, enum: [human_only, approval_required, auto_eligible] }
+        matchedPolicyIds: { type: array, items: { type: string } }
+        reasons: { type: array, items: { type: string } }
+        requiredRoles: { type: array, items: { type: string } }
+        actionMetadata: { $ref: '#/components/schemas/PolicyActionMetadata' }
+        facts: { $ref: '#/components/schemas/PolicyContextFacts' }
+        policySnapshotHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+        automationAvailable: { type: boolean, enum: [false] }
+        executionPerformed: { type: boolean, enum: [false] }
+    PolicyEvaluation:
+      type: object
+      additionalProperties: false
+      required: [tenantId, id, contextId, exceptionId, candidateActionType, candidateSource, policySnapshotHash, decision, evaluatedBy, evaluatedAt, stale]
+      properties:
+        tenantId: { type: string }
+        id: { type: string }
+        contextId: { type: string }
+        exceptionId: { type: string }
+        candidateActionType: { type: string, enum: [supplement_evidence, urge_follow_up, reject_overclaim, route_quotation_to_review, approve_or_change_quotation_terms, review_quotation, create_task] }
+        candidateSource: { type: string, enum: [human, ai_recommendation] }
+        sourceRecommendationId: { type: string }
+        sourceOptionId: { type: string }
+        policySnapshotHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+        decision: { $ref: '#/components/schemas/PolicyEvaluationDecision' }
+        evaluatedBy: { type: string }
+        evaluatedAt: { type: string, format: date-time }
+        stale: { type: boolean }
+    PolicyEvaluationList:
+      type: object
+      required: [contextId, exceptionId, evaluations]
+      properties:
+        contextId: { type: string }
+        exceptionId: { type: string }
+        evaluations: { type: array, items: { $ref: '#/components/schemas/PolicyEvaluation' } }
+    AutomationReadiness:
+      type: object
+      additionalProperties: false
+      required: [executable, policyMode, policyEvaluationStale, executorConfigured, executorSupportsAction, safetyBoundaryPassed, reasons]
+      properties:
+        executable: { type: boolean }
+        policyMode: { type: string, enum: [human_only, approval_required, auto_eligible] }
+        policyEvaluationStale: { type: boolean }
+        executorConfigured: { type: boolean }
+        executorSupportsAction: { type: boolean }
+        safetyBoundaryPassed: { type: boolean }
+        reasons: { type: array, items: { type: string } }
+    InternalWorkItem:
+      type: object
+      additionalProperties: false
+      required: [tenantId, id, contextId, exceptionId, kind, source, actionType, title, description, status, createdBy, createdAt, metadata]
+      properties:
+        tenantId: { type: string }
+        id: { type: string }
+        contextId: { type: string }
+        exceptionId: { type: string }
+        kind: { type: string, enum: [task, evidence_request] }
+        source: { type: string, enum: [policy_automation] }
+        actionType: { type: string, enum: [supplement_evidence, urge_follow_up, reject_overclaim, route_quotation_to_review, approve_or_change_quotation_terms, review_quotation, create_task] }
+        title: { type: string }
+        description: { type: string }
+        status: { type: string, enum: [open, completed, cancelled] }
+        createdBy: { type: string }
+        createdAt: { type: string, format: date-time }
+        metadata:
+          type: object
+          additionalProperties: false
+          properties:
+            policyEvaluationId: { type: string }
+            deterministicTemplate: { type: string }
+            operationKey: { type: string }
+    AutomationRun:
+      type: object
+      additionalProperties: false
+      required: [tenantId, id, contextId, exceptionId, policyEvaluationId, candidateActionType, executor, executorVersion, operationKey, status, triggerSource, triggeredBy, createdAt, completedAt]
+      properties:
+        tenantId: { type: string }
+        id: { type: string }
+        contextId: { type: string }
+        exceptionId: { type: string }
+        policyEvaluationId: { type: string }
+        candidateActionType: { type: string, enum: [supplement_evidence, urge_follow_up, reject_overclaim, route_quotation_to_review, approve_or_change_quotation_terms, review_quotation, create_task] }
+        sourceRecommendationId: { type: string }
+        sourceOptionId: { type: string }
+        executor: { type: string }
+        executorVersion: { type: string }
+        operationKey: { type: string, pattern: '^[a-f0-9]{64}$' }
+        status: { type: string, enum: [succeeded, failed, blocked] }
+        effectId: { type: string }
+        receiptId: { type: string }
+        triggerSource: { type: string, enum: [human_request, system] }
+        triggeredBy: { type: string }
+        createdAt: { type: string, format: date-time }
+        completedAt: { type: string, format: date-time }
+    AutomationReceipt:
+      type: object
+      additionalProperties: false
+      required: [tenantId, id, automationRunId, effectId, receiptSource, status, payloadHash, createdAt]
+      properties:
+        tenantId: { type: string }
+        id: { type: string }
+        automationRunId: { type: string }
+        effectId: { type: string }
+        receiptSource: { type: string, enum: [internal-work-item] }
+        status: { type: string, enum: [succeeded, failed] }
+        payloadHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+        createdAt: { type: string, format: date-time }
+    AutomationRunView:
+      type: object
+      additionalProperties: false
+      required: [run]
+      properties:
+        run: { $ref: '#/components/schemas/AutomationRun' }
+        receipt: { $ref: '#/components/schemas/AutomationReceipt' }
+        workItem: { $ref: '#/components/schemas/InternalWorkItem' }
+    AutomationRunList:
+      type: object
+      required: [contextId, exceptionId, runs]
+      properties:
+        contextId: { type: string }
+        exceptionId: { type: string }
+        policyEvaluationId: { type: string }
+        runs: { type: array, items: { $ref: '#/components/schemas/AutomationRunView' } }
+    InternalWorkItemList:
+      type: object
+      required: [workItems]
+      properties:
+        workItems: { type: array, items: { $ref: '#/components/schemas/InternalWorkItem' } }
+    OutcomeDefinition:
+      type: object
+      additionalProperties: false
+      required: [tenantId, id, version, name, exceptionCode, baselineMetricKey, currentEvidenceField, comparison, targetValue, betterDirection, enabled, contentHash, metadata, createdAt]
+      properties:
+        tenantId: { type: string }
+        id: { type: string }
+        version: { type: string }
+        name: { type: string }
+        exceptionCode: { type: string }
+        baselineMetricKey: { type: string }
+        currentEvidenceField: { type: string }
+        comparison: { type: string, enum: [eq, lte, gte] }
+        targetValue:
+          anyOf:
+            - { type: string }
+            - { type: number }
+        betterDirection: { type: string, enum: [lower, higher, toward_target] }
+        enabled: { type: boolean }
+        contentHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+        metadata: { type: object, additionalProperties: true }
+        createdAt: { type: string, format: date-time }
+    OutcomeEvaluation:
+      type: object
+      additionalProperties: false
+      required: [tenantId, id, contextId, exceptionId, definitionId, definitionVersion, ruleEvaluationId, evidenceIds, baseline, current, status, definitionSnapshotHash, evaluatedBy, evaluatedAt, targetValue, comparison, betterDirection, measuredAt, truthfulness, syntheticEvidence, stale]
+      properties:
+        tenantId: { type: string }
+        id: { type: string }
+        contextId: { type: string }
+        exceptionId: { type: string }
+        definitionId: { type: string }
+        definitionVersion: { type: string }
+        ruleEvaluationId: { type: string }
+        resolutionCaseId: { type: string }
+        automationRunId: { type: string }
+        evidenceIds: { type: array, items: { type: string } }
+        baseline:
+          type: object
+          additionalProperties: false
+          required: [metricKey, value, source]
+          properties:
+            metricKey: { type: string }
+            value:
+              anyOf:
+                - { type: string }
+                - { type: number }
+            source: { type: string, enum: [exception_metrics, rule_evaluation_metrics] }
+        current:
+          type: object
+          additionalProperties: false
+          required: [field, value, evidenceIds]
+          properties:
+            field: { type: string }
+            value:
+              anyOf:
+                - { type: string }
+                - { type: number }
+                - { type: "null" }
+            evidenceIds: { type: array, items: { type: string } }
+        status: { type: string, enum: [target_met, improved, unchanged, worsened, insufficient_evidence] }
+        definitionSnapshotHash: { type: string, pattern: '^[a-f0-9]{64}$' }
+        evaluatedBy: { type: string }
+        evaluatedAt: { type: string, format: date-time }
+        targetValue:
+          anyOf:
+            - { type: string }
+            - { type: number }
+        comparison: { type: string, enum: [eq, lte, gte] }
+        betterDirection: { type: string, enum: [lower, higher, toward_target] }
+        measuredAt: { type: string, format: date-time }
+        truthfulness:
+          type: object
+          additionalProperties: false
+          required: [evidenceBacked, causalAttribution]
+          properties:
+            evidenceBacked: { type: boolean }
+            causalAttribution: { type: boolean, enum: [false] }
+        syntheticEvidence: { type: boolean }
+        stale: { type: boolean }
+    OutcomeEvaluationList:
+      type: object
+      required: [contextId, exceptionId, evaluations]
+      properties:
+        contextId: { type: string }
+        exceptionId: { type: string }
+        evaluations: { type: array, items: { $ref: '#/components/schemas/OutcomeEvaluation' } }
+    OutcomeAnalyticsSummary:
+      type: object
+      additionalProperties: false
+      required: [summary, statusDistribution, coverage, observedOutcomeAssociation, actionAssociations, resolutionAssociation, syntheticEvidence, truthfulness]
+      properties:
+        summary:
+          type: object
+          additionalProperties: false
+          required: [measuredOutcomeCount, targetMetCount, improvedCount, unchangedCount, worsenedCount, insufficientEvidenceCount, outcomeMeasurementCoverage, observedTargetMetRate]
+          properties:
+            measuredOutcomeCount: { type: integer }
+            targetMetCount: { type: integer }
+            improvedCount: { type: integer }
+            unchangedCount: { type: integer }
+            worsenedCount: { type: integer }
+            insufficientEvidenceCount: { type: integer }
+            outcomeMeasurementCoverage: { type: number, nullable: true }
+            observedTargetMetRate: { type: number, nullable: true }
+        statusDistribution:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [status, count]
+            properties:
+              status: { type: string }
+              count: { type: integer }
+        coverage:
+          type: object
+          additionalProperties: false
+          required: [measured, notMeasured]
+          properties:
+            measured: { type: integer }
+            notMeasured: { type: integer }
+        observedOutcomeAssociation:
+          type: object
+          additionalProperties: false
+          required: [automation, resolution, unlinked]
+          properties:
+            automation: { $ref: '#/components/schemas/OutcomeAssociation' }
+            resolution: { $ref: '#/components/schemas/OutcomeAssociation' }
+            unlinked: { $ref: '#/components/schemas/OutcomeAssociation' }
+        actionAssociations:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [actionType, measured, targetMet, improved, unchanged, worsened]
+            properties:
+              actionType: { type: string }
+              measured: { type: integer }
+              targetMet: { type: integer }
+              improved: { type: integer }
+              unchanged: { type: integer }
+              worsened: { type: integer }
+        resolutionAssociation:
+          type: object
+          additionalProperties: false
+          required: [closedWithMeasuredOutcome, closedWithoutMeasuredOutcome]
+          properties:
+            closedWithMeasuredOutcome: { type: integer }
+            closedWithoutMeasuredOutcome: { type: integer }
+        syntheticEvidence: { type: boolean }
+        truthfulness:
+          type: object
+          additionalProperties: false
+          required: [causalAttribution, actionEffectivenessMeasured, roiMeasured, realCustomerOutcomeData]
+          properties:
+            causalAttribution: { type: boolean, enum: [false] }
+            actionEffectivenessMeasured: { type: boolean, enum: [false] }
+            roiMeasured: { type: boolean, enum: [false] }
+            realCustomerOutcomeData: { type: boolean, enum: [false] }
+    OutcomeAssociation:
+      type: object
+      additionalProperties: false
+      required: [measured, targetMet, improved, unchanged, worsened, insufficientEvidence]
+      properties:
+        measured: { type: integer }
+        targetMet: { type: integer }
+        improved: { type: integer }
+        unchanged: { type: integer }
+        worsened: { type: integer }
+        insufficientEvidence: { type: integer }
+    DecisionRecommendationDisposition:
+      type: object
+      additionalProperties: false
+      required: [id, tenantId, recommendationId, exceptionId, decision, rationale, actor, createdAt]
+      properties:
+        id: { type: string }
+        tenantId: { type: string }
+        recommendationId: { type: string }
+        exceptionId: { type: string }
+        decision: { type: string, enum: [accepted, modified, rejected] }
+        selectedOptionId: { type: string }
+        rationale: { type: string }
+        actor: { type: string }
+        createdAt: { type: string, format: date-time }
+    DecisionRecommendationDispositionList:
+      type: object
+      required: [recommendationId, dispositions]
+      properties:
+        recommendationId: { type: string }
+        dispositions: { type: array, items: { $ref: '#/components/schemas/DecisionRecommendationDisposition' } }
+    ResolutionAcceptanceRequest:
+      type: object
+      required: [ownerRole, rationale]
+      properties:
+        ownerRole: { type: string, minLength: 1 }
+        rationale: { type: string, minLength: 1 }
+    ResolutionReviewRequest:
+      type: object
+      required: [decision, rationale]
+      properties:
+        decision: { type: string, enum: [confirm, needs_evidence, reject] }
+        rationale: { type: string, minLength: 1 }
+    ResolutionProposalRequest:
+      type: object
+      required: [actions]
+      properties:
+        actions:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [type, summary]
+            properties:
+              type: { type: string, enum: [supplement_evidence, urge_follow_up, reject_overclaim, route_quotation_to_review, approve_or_change_quotation_terms, create_task] }
+              summary: { type: string, minLength: 1 }
+    CurrentActorContext:
+      type: object
+      additionalProperties: false
+      required: [tenantId, organization, organizationSource, user, subjectId, roles, authnMethod]
+      properties:
+        tenantId: { type: string }
+        organization: { type: string }
+        organizationSource: { type: string, enum: [demo, claim, tenant_fallback] }
+        user: { type: string }
+        subjectId: { type: string }
+        roles: { type: array, items: { type: string } }
+        authnMethod: { type: string, enum: [demo-header, jwt-hs256] }
+    CurrentActorContextResponse:
+      type: object
+      additionalProperties: false
+      required: [currentActor]
+      properties:
+        currentActor: { $ref: '#/components/schemas/CurrentActorContext' }
+        demoWorkspace: { $ref: '#/components/schemas/DemoWorkspaceProjection' }
+    IdentityCapabilities:
+      type: object
+      additionalProperties: false
+      description: >-
+        Backend-computed capability projection. `actorType=system` marks connector
+        runtime identities; `demoOnlySuperuser=true` means the identity carries `*`
+        and must never be used in production.
+      required:
+        - actorType
+        - canonicalRoles
+        - scopes
+        - demoOnlySuperuser
+        - canReadContext
+        - canReadException
+        - canReadEvidence
+        - canRecommend
+        - canSubmit
+        - canApprove
+        - canReject
+        - canExecute
+        - canReadAnalytics
+        - canManageConnectors
+        - canManageSolutionPacks
+        - canManageTenant
+      properties:
+        actorType: { type: string, enum: [user, system] }
+        canonicalRoles:
+          type: array
+          items: { type: string, enum: [viewer, operator, reviewer, approver, admin] }
+        scopes: { type: array, items: { type: string } }
+        demoOnlySuperuser: { type: boolean }
+        canReadContext: { type: boolean }
+        canReadException: { type: boolean }
+        canReadEvidence: { type: boolean }
+        canRecommend: { type: boolean }
+        canSubmit: { type: boolean }
+        canApprove: { type: boolean }
+        canReject: { type: boolean }
+        canExecute: { type: boolean }
+        canReadAnalytics: { type: boolean }
+        canManageConnectors: { type: boolean }
+        canManageSolutionPacks: { type: boolean }
+        canManageTenant: { type: boolean }
+    IdentityProjection:
+      type: object
+      additionalProperties: false
+      required: [subjectId, tenantId, displayName, roles, canonicalRoles, scopes, capabilities]
+      properties:
+        subjectId: { type: string }
+        tenantId: { type: string }
+        displayName: { type: string }
+        organization: { type: string }
+        organizationSource: { type: string, enum: [demo, claim, tenant_fallback] }
+        authnMethod: { type: string, enum: [demo-header, jwt-hs256] }
+        roles: { type: array, items: { type: string } }
+        canonicalRoles:
+          type: array
+          items: { type: string, enum: [viewer, operator, reviewer, approver, admin] }
+        scopes: { type: array, items: { type: string } }
+        capabilities: { $ref: '#/components/schemas/IdentityCapabilities' }
+    GovernanceStage:
+      type: string
+      enum: [not_started, review, proposal, proposal_draft, pending_approval, approved, executed, closed, rejected]
+    DemoWorkspaceProjection:
+      type: object
+      additionalProperties: false
+      required: [organizations]
+      properties:
+        organizations:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [organization, tenantId, packs, contexts, defaultPath]
+            properties:
+              organization: { type: string }
+              tenantId: { type: string }
+              packs:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: false
+                  required: [packId, version, name, contexts]
+                  properties:
+                    packId: { type: string }
+                    version: { type: string }
+                    name: { type: string }
+                    contexts: { type: array, items: { $ref: '#/components/schemas/PackBoundContext' } }
+              contexts: { type: array, items: { $ref: '#/components/schemas/PackBoundContext' } }
+              defaultPath: { type: string }
+    CapabilityDecision:
+      type: object
+      additionalProperties: false
+      required: [applicable, allowed, reasonCode, reason]
+      properties:
+        applicable: { type: boolean }
+        allowed: { type: boolean }
+        reasonCode: { type: string }
+        reason: { type: string }
+    ResolutionCapabilities:
+      type: object
+      additionalProperties: false
+      required: [canAccept, canReview, canPropose, canSubmit, canApprove, canExecute, canClose]
+      properties:
+        canAccept: { $ref: '#/components/schemas/CapabilityDecision' }
+        canReview: { $ref: '#/components/schemas/CapabilityDecision' }
+        canPropose: { $ref: '#/components/schemas/CapabilityDecision' }
+        canSubmit: { $ref: '#/components/schemas/CapabilityDecision' }
+        canApprove: { $ref: '#/components/schemas/CapabilityDecision' }
+        canExecute: { $ref: '#/components/schemas/CapabilityDecision' }
+        canClose: { $ref: '#/components/schemas/CapabilityDecision' }
+    ResolutionCapabilitiesResponse:
+      type: object
+      additionalProperties: false
+      required: [currentActor, resolutionCapabilities, assignableOwnerRoles]
+      properties:
+        currentActor: { $ref: '#/components/schemas/CurrentActorContext' }
+        resolutionCapabilities: { $ref: '#/components/schemas/ResolutionCapabilities' }
+        assignableOwnerRoles: { type: array, items: { type: string } }
+    ResolutionCase:
+      type: object
+      additionalProperties: true
+      required: [id, tenantId, contextId, exceptionId, status, ownerRole, origin, runtime]
+    ResolutionCaseQuery:
+      type: object
+      additionalProperties: true
+      required: [resolutionCase, sourceException, sourceChanged, intakeEvaluationId, currentEvaluationId, evidenceBundle, receipts]
+    ResolutionCaseListResponse:
+      type: object
+      required: [contextId, resolutionCases]
+      properties:
+        contextId: { type: string }
+        resolutionCases:
+          type: array
+          items:
+            type: object
+            required: [id, exceptionId, status, ownerRole, title, createdAt, updatedAt]
+    RefreshRequest:
+      type: object
+      required: [endpoints]
+      properties:
+        endpoints: { type: array, minItems: 1, items: { type: object, required: [id, url], properties: { id: { type: string }, url: { type: string, format: uri } } } }
+        kind: { type: string, enum: [quote, order, payment, complaint, email, alert] }
+        format: { type: string, enum: [csv, markdown], default: csv }
+        sourceId: { type: string }
+        version: { type: string }
+    ConflictReviewInput:
+      type: object
+      required: [conflictId, decision, rationale]
+      properties:
+        conflictId: { type: string }
+        decision: { type: string, enum: [acknowledge, accept_left, accept_right, needs_evidence] }
+        selectedEvidenceId: { type: string }
+        rationale: { type: string, minLength: 1 }
+    AdjudicationRequest:
+      type: object
+      required: [decision, rationale]
+      properties: { decision: { type: string, enum: [accept, supplement, reject] }, rationale: { type: string, minLength: 1 } }
+    SandboxRequest:
+      type: object
+      required: [scenario]
+      properties: { scenario: { type: string, enum: [evidence, claim, hold] } }
+    MoreCapabilityRequest:
+      type: object
+      required: [action]
+      properties: { action: { type: string, enum: [versions, review, outcome, audit] }, result: { type: string }, rationale: { type: string } }

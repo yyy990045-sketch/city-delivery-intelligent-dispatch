@@ -1,0 +1,8 @@
+{
+  "status": "TRUTH_CLAIM_AUDIT_LOCALLY_VERIFIED",
+  "canonicalChain": "Industrial Systems → open supOS / UNS boundary → Semantic Mapping → Evidence → Exception → AI Assistance → Human Governance → Execution → Outcome → Analytics",
+  "missingMarkers": [],
+  "overclaims": [],
+  "falseFlags": [],
+  "historicalPublicAddressNote": "A historical handoff document still names a public host and SSH target. That is not a credential. Remove it before a public release."
+}

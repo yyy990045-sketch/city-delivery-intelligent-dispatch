@@ -1,0 +1,179 @@
+import type { components } from "../../api/schema.js";
+
+type GeneratedWorkbench = components["schemas"]["V2ManufacturingWorkbenchResponse"];
+type GeneratedEvidenceBundle = components["schemas"]["V2ExceptionEvidenceBundle"];
+
+export type WorkbenchContext = {
+  id: string;
+  businessKey: string;
+  contextType: string;
+  status: string;
+  openedAt: string;
+  updatedAt: string;
+};
+
+export type WorkbenchStats = {
+  sourceSystems: number;
+  entities: number;
+  documents: number;
+  events: number;
+  evidence: number;
+  ruleEvaluations: number;
+  matchedRules: number;
+  notMatchedRules: number;
+  exceptions: number;
+  resolutionCases: number;
+};
+
+export type ThreadFact = {
+  key: string;
+  label: string;
+  field: string;
+  value: unknown;
+  valueType: string;
+  evidenceId: string;
+  observedAt: string;
+};
+
+export type ThreadStage = {
+  key: string;
+  label: string;
+  entityId: string;
+  businessKey: string;
+  state: "normal" | "exception";
+  facts: ThreadFact[];
+  occurredAt: string | null;
+  sourceSystem: { id: string; name: string; systemType: string } | null;
+  sourceDocument: { id: string; externalDocumentId: string; documentType: string; version: string } | null;
+  latestEvent: { id: string; eventType: string; label: string; occurredAt: string } | null;
+};
+
+export type RuleView = {
+  id: string;
+  code: string;
+  label: string;
+  status: string;
+  statusLabel: string;
+  matched: boolean;
+  stageKeys: string[];
+  metrics: Record<string, unknown>;
+  ruleId: string;
+  ruleVersion: string;
+  evaluatedAt: string;
+};
+
+export type ExceptionView = {
+  id: string;
+  code: string;
+  label: string;
+  severity: string;
+  status: string;
+  governanceStage: "not_started" | "review" | "proposal" | "proposal_draft" | "pending_approval" | "approved" | "executed" | "closed" | "rejected";
+  title: string;
+  summary: string;
+  metrics: Record<string, unknown>;
+  matchKey: string;
+  ruleId: string;
+  ruleVersionId: string;
+  latestRuleEvaluationId: string;
+  entityIds: string[];
+  stageKeys: string[];
+  evidenceCount: number;
+  sourceSystemCount: number;
+  createdAt: string;
+  lastDetectedAt: string;
+};
+
+export type ResolutionCaseSummaryView = {
+  id: string;
+  exceptionId: string;
+  status: string;
+  governanceStage: ExceptionView["governanceStage"];
+  ownerRole: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+/**
+ * 工业语义层投影：ISA-95 空间 + 多系统来源 + 可追溯履约链。
+ * 上下文没有 UNS 绑定时为 null —— 现有页面消费这些字段时不需要理解 ISA-95。
+ */
+export type IndustrialContextSummaryView = {
+  schemaVersion: string;
+  tenantId: string;
+  contextId: string;
+  businessKey: string;
+  space: { enterpriseId: string; siteId: string; areaId: string; lineId: string; equipmentId?: string } | null;
+  unsRootPath: string | null;
+  environment: string;
+  sourceSystems: Array<{ id: string; name: string; systemType: string; authorityLevel: string }>;
+  entities: Array<{ id: string; entityType: string; businessKey: string; eventCount: number }>;
+  eventCount: number;
+  evidenceCount: number;
+  exceptionCount: number;
+  evaluationCount: number;
+  trace: Array<{
+    position: number;
+    entityType: string;
+    entityId: string;
+    businessKey: string;
+    sourceSystemId: string | null;
+    sourceSystemType: string | null;
+    domain: string | null;
+    occurredAt: string | null;
+    eventCount: number;
+    evidenceIds: string[];
+  }>;
+  mappingVersions: string[];
+  truthfulness: Record<string, string | boolean>;
+};
+
+export type WorkbenchView = Omit<GeneratedWorkbench, "context" | "stats" | "thread" | "rules" | "exceptions" | "resolutionCases"> & {
+  context: WorkbenchContext;
+  industrial?: IndustrialContextSummaryView | null;
+  stats: WorkbenchStats;
+  thread: ThreadStage[];
+  rules: RuleView[];
+  exceptions: ExceptionView[];
+  resolutionCases: ResolutionCaseSummaryView[];
+};
+
+export type EvidenceRole = "expected" | "actual" | "claim" | "context";
+
+export type EvidenceItem = {
+  evidenceId: string;
+  role: EvidenceRole;
+  field: string;
+  value: unknown;
+  valueType: string;
+  sourceSystemId: string;
+  sourceDocumentId: string;
+  sourceVersion: string;
+  eventId?: string;
+  observedAt: string;
+  support: string;
+  quote: string;
+  confidence?: number;
+  locator?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
+};
+
+export type EvidenceSourceSystem = {
+  id: string;
+  name: string;
+  systemType: string;
+};
+
+export type EvidenceSourceDocument = {
+  id: string;
+  externalDocumentId: string;
+  documentType: string;
+  version: string;
+};
+
+export type EvidenceBundleView = Omit<GeneratedEvidenceBundle, "evidence" | "sourceDocuments" | "sourceSystems"> & {
+  evidence: EvidenceItem[];
+  sourceDocuments: EvidenceSourceDocument[];
+  sourceSystems: EvidenceSourceSystem[];
+};
