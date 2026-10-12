@@ -18,11 +18,10 @@ py -3.12 -m venv .venv
 另开终端启动前端：
 
 ```powershell
-$env:VITE_LOGISTICS_DIRECT='true'
-npm run frontend:dev -- --host 127.0.0.1 --port 8111 --strictPort
+npm run frontend:dev
 ```
 
-打开 `http://127.0.0.1:8111/frontend/city-delivery/dispatch`。点击“加载地理任务并规划”调用真实检查与规划。也可下载旁边的“任务 JSON”，在02用原“导入配送任务”上传、检查、规划。地图及数据离线运行；首次安装npm/Python依赖需要网络。Linux/macOS使用相应venv路径和 `VITE_LOGISTICS_DIRECT=true npm run frontend:dev ...`。
+打开 `http://127.0.0.1:8111/frontend/city-delivery/dispatch`。点击“加载示例任务并计算”调用真实检查与规划。也可下载任务 JSON，在02用“导入配送任务”上传、检查、规划。地图及数据离线运行；首次安装npm/Python依赖需要网络。Linux/macOS使用相应venv路径和 `npm run frontend:dev`。
 
 ## 演示步骤
 
@@ -56,7 +55,7 @@ npm run frontend:dev -- --host 127.0.0.1 --port 8111 --strictPort
 npm run typecheck
 npm run frontend:test
 npm run frontend:build
-npx playwright install chromium
+npx playwright install webkit
 $env:CITY_DELIVERY_PYTHON=(Resolve-Path .\.venv\Scripts\python.exe).Path
 npx playwright test --config frontend/playwright.city-geo.config.ts
 npx playwright test --config frontend/playwright.city-delivery.config.ts

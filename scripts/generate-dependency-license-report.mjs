@@ -19,7 +19,7 @@ const markers = ["UNKNOWN", "UNLICENSED", "SEE_LICENSE", "CUSTOM", "UNRECOGNIZED
 const lines = [
   "# Third-party dependency inventory",
   "",
-  "Generated from the root `package-lock.json`. Backend (`src/`) and frontend (`frontend/`) share this one npm project; the frontend has no separate lockfile.",
+  "Generated from the root `package-lock.json` for the city delivery frontend, build tools and browser checks. Python dependencies are recorded separately in `tools/city-delivery-decision/requirements.txt`.",
   `Lockfile SHA-256: \`${createHash("sha256").update(JSON.stringify(lock.packages)).digest("hex")}\`.`,
   "",
   "This is a lockfile inventory, not a legal opinion. Missing npm license metadata is recorded as `UNKNOWN` and is not treated as permission to use the package.",

@@ -1,0 +1,173 @@
+{
+  "baseline": "e4ec4c2a6b3eb378a7e0fe8d496924304ec810fb",
+  "scope": "repository cleanup only",
+  "originalRepositoryModified": false,
+  "inventory": {
+    "before": 1232,
+    "deleted": 772,
+    "addedEvidenceFiles": 8,
+    "after": 468,
+    "removedDirectories": 155,
+    "deletedByTopLevel": {
+      ".ccg": 129,
+      ".dockerignore": 1,
+      ".env.automation.example": 1,
+      ".env.decision-ai.example": 1,
+      ".env.example": 1,
+      ".env.grounded-ai.example": 1,
+      ".env.open-supos.example": 1,
+      ".env.production.example": 1,
+      ".env.root-cause-ai.example": 1,
+      ".github": 1,
+      ".workflow": 9,
+      "CHANGELOG.md": 1,
+      "Dockerfile": 1,
+      "artifacts": 12,
+      "contracts": 2,
+      "deploy": 9,
+      "docker-compose.deploy.yml": 1,
+      "docs": 72,
+      "frontend": 125,
+      "gold-set": 1,
+      "release": 1,
+      "scripts": 18,
+      "src": 280,
+      "submission": 10,
+      "tests": 88,
+      "tsconfig.json": 1,
+      "vitest.config.ts": 1,
+      "前后端逻辑审查说明.md": 1,
+      "履约异常处理台前后端逻辑说明.docx": 1
+    }
+  },
+  "unchanged": {
+    "plannerAndChecks": true,
+    "scenarioData": true,
+    "gisGeometryAndSnapshots": true,
+    "cityPageDesign": true,
+    "retainedDependencyVersions": true,
+    "allOriginalCityTestCasesAndAssertionsRetained": true
+  },
+  "verification": {
+    "cleanDirectory": true,
+    "environment": {
+      "node": "24.18.0",
+      "npm": "11.16.0",
+      "python": "3.12.13",
+      "browser": "Playwright WebKit 26.6, headed"
+    },
+    "npmCi": "passed",
+    "typecheck": "passed",
+    "frontendTests": {
+      "passed": 21,
+      "failed": 0
+    },
+    "frontendBuild": "passed (existing bundle-size warning)",
+    "pythonVerify": "passed",
+    "pythonVerifyV3": "passed",
+    "gisDataVerify": "passed",
+    "backendHealth": "ready",
+    "cityBrowser": {
+      "startTime": "2026-10-12T06:54:07.815Z",
+      "duration": 99782.712,
+      "expected": 9,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "gisBrowser": {
+      "startTime": "2026-10-12T06:55:47.912Z",
+      "duration": 63275.122,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "standardPlanning": {
+      "records": 6,
+      "invalidInputsRejected": 6,
+      "routeDurationChecks": 33,
+      "methodResults": [
+        {
+          "strategy": "route-first",
+          "executable": false,
+          "cost": null
+        },
+        {
+          "strategy": "layout-repair",
+          "executable": false,
+          "cost": null
+        },
+        {
+          "strategy": "joint-feedback",
+          "executable": true,
+          "cost": 194.8
+        }
+      ]
+    },
+    "sixPages": [
+      {
+        "page": "overview",
+        "status": 200,
+        "title": "配送驾驶舱 · 城市配送智能配载",
+        "scenario": "city-delivery-multivehicle-synthetic-001",
+        "plan": "FLEET_BASELINE"
+      },
+      {
+        "page": "orders",
+        "status": 200,
+        "title": "订单与货物 · 城市配送智能配载",
+        "scenario": "city-delivery-multivehicle-synthetic-001",
+        "plan": "FLEET_BASELINE"
+      },
+      {
+        "page": "dispatch",
+        "status": 200,
+        "title": "智能调度 · 城市配送智能配载",
+        "scenario": "city-delivery-multivehicle-synthetic-001",
+        "plan": "FLEET_BASELINE"
+      },
+      {
+        "page": "packing",
+        "status": 200,
+        "title": "三维配载与装卸 · 城市配送智能配载",
+        "scenario": "city-delivery-multivehicle-synthetic-001",
+        "plan": "FLEET_BASELINE"
+      },
+      {
+        "page": "execution",
+        "status": 200,
+        "title": "执行与调整 · 城市配送智能配载",
+        "scenario": "city-delivery-multivehicle-synthetic-001",
+        "plan": "FLEET_BASELINE"
+      },
+      {
+        "page": "effects",
+        "status": 200,
+        "title": "优化效果 · 城市配送智能配载",
+        "scenario": "city-delivery-multivehicle-synthetic-001",
+        "plan": "FLEET_BASELINE"
+      },
+      {
+        "rootRedirect": "overview",
+        "pageErrors": []
+      }
+    ]
+  },
+  "adaptations": [
+    "Removed obsolete route entry and legacy navigation link.",
+    "Browser checks use WebKit; no Chrome or Chromium launched.",
+    "Preserved work-sheet export/content checks; replaced Chromium-only evidence PDF rendering with a PNG screenshot."
+  ],
+  "initialAttemptLimitations": [
+    "Firefox could not launch in this host environment.",
+    "First WebKit city run stopped at unsupported evidence-only PDF API.",
+    "An initial GIS 1440 execution check timed out. Final complete serial runs passed without changing its assertions or timeout."
+  ],
+  "residualSharedFiles": [
+    "frontend/src/features/logistics/scene/create-scene.ts",
+    "frontend/src/features/logistics/types.ts",
+    "frontend/src/features/city-delivery/workbench.css"
+  ],
+  "mergeStatus": "not merged"
+}
