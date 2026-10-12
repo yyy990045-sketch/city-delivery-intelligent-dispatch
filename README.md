@@ -86,8 +86,8 @@
 需要 Node.js 24、Python 3.12 和 Chromium。
 
 ```bash
-git clone https://github.com/yyy990045-sketch/fulfillment-exception-pack-v2.git
-cd fulfillment-exception-pack-v2
+git clone https://github.com/yyy990045-sketch/city-delivery-intelligent-dispatch.git
+cd city-delivery-intelligent-dispatch
 npm ci
 python3.12 -m venv tools/city-delivery-decision/.venv
 tools/city-delivery-decision/.venv/bin/python -m pip install -r tools/city-delivery-decision/requirements.txt
