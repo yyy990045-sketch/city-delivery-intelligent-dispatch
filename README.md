@@ -83,7 +83,7 @@
 
 ## macOS / Linux 本地运行
 
-建议使用 Node.js 24、Python 3.12。浏览器验收使用 WebKit（Safari 同源引擎），页面运行需要 WebGL。
+建议使用 Node.js 24、Python 3.12。开发检查支持 Node.js 22.12 及以上的 22.x、24.x 或 26 及以上版本，与 Vitest 5 的要求一致。浏览器验收使用 WebKit（Safari 同源引擎），页面运行需要 WebGL。
 
 ```bash
 git clone https://github.com/yyy990045-sketch/city-delivery-intelligent-dispatch.git
@@ -142,3 +142,5 @@ CITY_DELIVERY_PYTHON="$PWD/tools/city-delivery-decision/.venv/bin/python" npm ru
 数据与模型授权：[许可记录](docs/open-source/license-audit.md)、[车辆模型](frontend/public/assets/models/LICENSE.md)、[离线 OSM 数据](frontend/public/demo/city-delivery/geo-city/v1/README.md)。项目整体许可证尚未选定，不把第三方授权描述为本项目已经开源。
 
 本轮仓库整理与独立运行结果：[清理清单、验证结果和六页新画面](docs/repository-cleanup.md)。
+
+开发依赖安全修复：[前后审计、版本变化和完整回归结果](docs/dependency-security-fix.md)。

@@ -1,0 +1,175 @@
+{
+  "baseline": "aa3673c11fe052e30fcc78eac396632f9b9396af",
+  "completedAt": "2026-10-12T08:19:01.378Z",
+  "branch": "codex/city-delivery-development-dependency-security",
+  "environment": {
+    "node": "v24.18.0",
+    "npm": "11.16.0",
+    "python": "3.12.13",
+    "ortools": "9.11.4210",
+    "browser": "WebKit",
+    "headed": true,
+    "independentCleanInstall": true
+  },
+  "scope": {
+    "applicationSourcesUnchanged": true,
+    "testsAndAssertionsUnchanged": true,
+    "gisAndDemoDataUnchanged": true,
+    "pythonAndAlgorithmsUnchanged": true,
+    "runtimeDependenciesUnchanged": true,
+    "automaticForceFixUsed": false
+  },
+  "audit": {
+    "before": {
+      "info": 0,
+      "low": 0,
+      "moderate": 3,
+      "high": 2,
+      "critical": 2,
+      "total": 7
+    },
+    "after": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "productionBefore": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "productionAfter": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    }
+  },
+  "checks": {
+    "npmCi": "passed",
+    "typecheck": "passed",
+    "unitTests": {
+      "files": 4,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0
+    },
+    "frontendBuild": "passed",
+    "pythonVerify": "passed",
+    "pythonVerifyV3": "passed",
+    "gisDataVerify": "passed",
+    "licenseVerify": "passed",
+    "cityBrowser": {
+      "startTime": "2026-10-12T08:08:46.655Z",
+      "duration": 101131.566,
+      "expected": 9,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "gisBrowser": {
+      "startTime": "2026-10-12T08:15:34.266Z",
+      "duration": 63990.597,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "productChecks": {
+    "sixPages": {
+      "rootRedirect": "overview",
+      "pages": [
+        {
+          "page": "overview",
+          "status": 200,
+          "title": "配送驾驶舱 · 城市配送智能配载",
+          "scenarioId": "city-delivery-multivehicle-synthetic-001",
+          "planId": "FLEET_BASELINE"
+        },
+        {
+          "page": "orders",
+          "status": 200,
+          "title": "订单与货物 · 城市配送智能配载",
+          "scenarioId": "city-delivery-multivehicle-synthetic-001",
+          "planId": "FLEET_BASELINE"
+        },
+        {
+          "page": "dispatch",
+          "status": 200,
+          "title": "智能调度 · 城市配送智能配载",
+          "scenarioId": "city-delivery-multivehicle-synthetic-001",
+          "planId": "FLEET_BASELINE"
+        },
+        {
+          "page": "packing",
+          "status": 200,
+          "title": "三维配载与装卸 · 城市配送智能配载",
+          "scenarioId": "city-delivery-multivehicle-synthetic-001",
+          "planId": "FLEET_BASELINE"
+        },
+        {
+          "page": "execution",
+          "status": 200,
+          "title": "执行与调整 · 城市配送智能配载",
+          "scenarioId": "city-delivery-multivehicle-synthetic-001",
+          "planId": "FLEET_BASELINE"
+        },
+        {
+          "page": "effects",
+          "status": 200,
+          "title": "优化效果 · 城市配送智能配载",
+          "scenarioId": "city-delivery-multivehicle-synthetic-001",
+          "planId": "FLEET_BASELINE"
+        }
+      ],
+      "pageErrors": []
+    },
+    "loadingAndUnloadingReplay": "passed original browser checks",
+    "skuImportAndConfirmation": "passed original browser checks",
+    "actualJointFeedback": [
+      {
+        "strategy": "route-first",
+        "httpStatus": 200,
+        "solverStatus": "SEARCH_EXHAUSTED",
+        "executable": false,
+        "actualExecutablePlanCost": null,
+        "clientInterfaceMs": 85.559
+      },
+      {
+        "strategy": "layout-repair",
+        "httpStatus": 200,
+        "solverStatus": "SEARCH_EXHAUSTED",
+        "executable": false,
+        "actualExecutablePlanCost": null,
+        "clientInterfaceMs": 96.197
+      },
+      {
+        "strategy": "joint-feedback",
+        "httpStatus": 200,
+        "solverStatus": "FEASIBLE",
+        "executable": true,
+        "actualExecutablePlanCost": 194.8,
+        "clientInterfaceMs": 98.945
+      }
+    ],
+    "invalidInputRejections": 6,
+    "routeDurationCases": 33,
+    "health": "ready"
+  },
+  "limitations": [
+    "npm audit covers known npm dependency advisories, not a complete security audit",
+    "Existing large frontend bundle warning is unchanged",
+    "The project license remains undecided; third-party licenses are retained",
+    "Development checks now require a Node version supported by Vitest 5"
+  ],
+  "pullRequestMerged": false
+}

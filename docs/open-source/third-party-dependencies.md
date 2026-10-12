@@ -1,7 +1,7 @@
 # Third-party dependency inventory
 
 Generated from the root `package-lock.json` for the city delivery frontend, build tools and browser checks. Python dependencies are recorded separately in `tools/city-delivery-decision/requirements.txt`.
-Lockfile SHA-256: `03ac328b457a9239f186314b448798be50fbc1491f5db8df1696da805bca2478`.
+Lockfile SHA-256: `4b55b9351f6e7030d30bf4ff805a6f84b02432dee9cd8c1240ff3975351e1f0b`.
 
 This is a lockfile inventory, not a legal opinion. Missing npm license metadata is recorded as `UNKNOWN` and is not treated as permission to use the package.
 
@@ -41,77 +41,31 @@ This is a lockfile inventory, not a legal opinion. Missing npm license metadata 
 | @emnapi/core | 1.11.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | package-lock.json |
 | @emnapi/runtime | 1.11.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | package-lock.json |
 | @emnapi/wasi-threads | 1.2.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | package-lock.json |
-| @esbuild/aix-ppc64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.21.5.tgz |
-| @esbuild/aix-ppc64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.21.5.tgz |
 | @esbuild/aix-ppc64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.28.2.tgz |
-| @esbuild/android-arm | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.21.5.tgz |
-| @esbuild/android-arm | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.21.5.tgz |
 | @esbuild/android-arm | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.28.2.tgz |
-| @esbuild/android-arm64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.21.5.tgz |
-| @esbuild/android-arm64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.21.5.tgz |
 | @esbuild/android-arm64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.28.2.tgz |
-| @esbuild/android-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.21.5.tgz |
-| @esbuild/android-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.21.5.tgz |
 | @esbuild/android-x64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.28.2.tgz |
-| @esbuild/darwin-arm64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.21.5.tgz |
-| @esbuild/darwin-arm64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.21.5.tgz |
 | @esbuild/darwin-arm64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.28.2.tgz |
-| @esbuild/darwin-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.21.5.tgz |
-| @esbuild/darwin-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.21.5.tgz |
 | @esbuild/darwin-x64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.28.2.tgz |
-| @esbuild/freebsd-arm64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/freebsd-arm64/-/freebsd-arm64-0.21.5.tgz |
-| @esbuild/freebsd-arm64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/freebsd-arm64/-/freebsd-arm64-0.21.5.tgz |
 | @esbuild/freebsd-arm64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/freebsd-arm64/-/freebsd-arm64-0.28.2.tgz |
-| @esbuild/freebsd-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/freebsd-x64/-/freebsd-x64-0.21.5.tgz |
-| @esbuild/freebsd-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/freebsd-x64/-/freebsd-x64-0.21.5.tgz |
 | @esbuild/freebsd-x64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/freebsd-x64/-/freebsd-x64-0.28.2.tgz |
-| @esbuild/linux-arm | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-arm/-/linux-arm-0.21.5.tgz |
-| @esbuild/linux-arm | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-arm/-/linux-arm-0.21.5.tgz |
 | @esbuild/linux-arm | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-arm/-/linux-arm-0.28.2.tgz |
-| @esbuild/linux-arm64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-arm64/-/linux-arm64-0.21.5.tgz |
-| @esbuild/linux-arm64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-arm64/-/linux-arm64-0.21.5.tgz |
 | @esbuild/linux-arm64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-arm64/-/linux-arm64-0.28.2.tgz |
-| @esbuild/linux-ia32 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-ia32/-/linux-ia32-0.21.5.tgz |
-| @esbuild/linux-ia32 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-ia32/-/linux-ia32-0.21.5.tgz |
 | @esbuild/linux-ia32 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-ia32/-/linux-ia32-0.28.2.tgz |
-| @esbuild/linux-loong64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-loong64/-/linux-loong64-0.21.5.tgz |
-| @esbuild/linux-loong64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-loong64/-/linux-loong64-0.21.5.tgz |
 | @esbuild/linux-loong64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-loong64/-/linux-loong64-0.28.2.tgz |
-| @esbuild/linux-mips64el | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-mips64el/-/linux-mips64el-0.21.5.tgz |
-| @esbuild/linux-mips64el | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-mips64el/-/linux-mips64el-0.21.5.tgz |
 | @esbuild/linux-mips64el | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-mips64el/-/linux-mips64el-0.28.2.tgz |
-| @esbuild/linux-ppc64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-ppc64/-/linux-ppc64-0.21.5.tgz |
-| @esbuild/linux-ppc64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-ppc64/-/linux-ppc64-0.21.5.tgz |
 | @esbuild/linux-ppc64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-ppc64/-/linux-ppc64-0.28.2.tgz |
-| @esbuild/linux-riscv64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-riscv64/-/linux-riscv64-0.21.5.tgz |
-| @esbuild/linux-riscv64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-riscv64/-/linux-riscv64-0.21.5.tgz |
 | @esbuild/linux-riscv64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-riscv64/-/linux-riscv64-0.28.2.tgz |
-| @esbuild/linux-s390x | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-s390x/-/linux-s390x-0.21.5.tgz |
-| @esbuild/linux-s390x | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-s390x/-/linux-s390x-0.21.5.tgz |
 | @esbuild/linux-s390x | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-s390x/-/linux-s390x-0.28.2.tgz |
-| @esbuild/linux-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.21.5.tgz |
-| @esbuild/linux-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.21.5.tgz |
 | @esbuild/linux-x64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.28.2.tgz |
 | @esbuild/netbsd-arm64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/netbsd-arm64/-/netbsd-arm64-0.28.2.tgz |
-| @esbuild/netbsd-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/netbsd-x64/-/netbsd-x64-0.21.5.tgz |
-| @esbuild/netbsd-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/netbsd-x64/-/netbsd-x64-0.21.5.tgz |
 | @esbuild/netbsd-x64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/netbsd-x64/-/netbsd-x64-0.28.2.tgz |
 | @esbuild/openbsd-arm64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/openbsd-arm64/-/openbsd-arm64-0.28.2.tgz |
-| @esbuild/openbsd-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/openbsd-x64/-/openbsd-x64-0.21.5.tgz |
-| @esbuild/openbsd-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/openbsd-x64/-/openbsd-x64-0.21.5.tgz |
 | @esbuild/openbsd-x64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/openbsd-x64/-/openbsd-x64-0.28.2.tgz |
 | @esbuild/openharmony-arm64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/openharmony-arm64/-/openharmony-arm64-0.28.2.tgz |
-| @esbuild/sunos-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/sunos-x64/-/sunos-x64-0.21.5.tgz |
-| @esbuild/sunos-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/sunos-x64/-/sunos-x64-0.21.5.tgz |
 | @esbuild/sunos-x64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/sunos-x64/-/sunos-x64-0.28.2.tgz |
-| @esbuild/win32-arm64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/win32-arm64/-/win32-arm64-0.21.5.tgz |
-| @esbuild/win32-arm64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/win32-arm64/-/win32-arm64-0.21.5.tgz |
 | @esbuild/win32-arm64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/win32-arm64/-/win32-arm64-0.28.2.tgz |
-| @esbuild/win32-ia32 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/win32-ia32/-/win32-ia32-0.21.5.tgz |
-| @esbuild/win32-ia32 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/win32-ia32/-/win32-ia32-0.21.5.tgz |
 | @esbuild/win32-ia32 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/win32-ia32/-/win32-ia32-0.28.2.tgz |
-| @esbuild/win32-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.21.5.tgz |
-| @esbuild/win32-x64 | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.21.5.tgz |
 | @esbuild/win32-x64 | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.28.2.tgz |
 | @exodus/bytes | 1.15.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@exodus/bytes/-/bytes-1.15.1.tgz |
 | @jridgewell/gen-mapping | 0.3.13 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.13.tgz |
@@ -176,6 +130,8 @@ This is a lockfile inventory, not a legal opinion. Missing npm license metadata 
 | @types/babel__generator | 7.27.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@types/babel__generator/-/babel__generator-7.27.0.tgz |
 | @types/babel__template | 7.4.4 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@types/babel__template/-/babel__template-7.4.4.tgz |
 | @types/babel__traverse | 7.28.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@types/babel__traverse/-/babel__traverse-7.28.0.tgz |
+| @types/chai | 5.2.3 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@types/chai/-/chai-5.2.3.tgz |
+| @types/deep-eql | 4.0.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@types/deep-eql/-/deep-eql-4.0.2.tgz |
 | @types/estree | 1.0.9 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@types/estree/-/estree-1.0.9.tgz |
 | @types/node | 24.13.3 | MIT | Node.js TypeScript types | DIRECT | https://registry.npmjs.org/@types/node/-/node-24.13.3.tgz |
 | @types/react | 19.3.0 | MIT | React TypeScript types | DIRECT | https://registry.npmjs.org/@types/react/-/react-19.3.0.tgz |
@@ -184,13 +140,8 @@ This is a lockfile inventory, not a legal opinion. Missing npm license metadata 
 | @types/three | 0.186.0 | MIT | Three.js TypeScript types | DIRECT | https://registry.npmjs.org/@types/three/-/three-0.186.0.tgz |
 | @types/webxr | 0.5.24 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@types/webxr/-/webxr-0.5.24.tgz |
 | @vitejs/plugin-react | 5.2.0 | MIT | Frontend React build plugin | DIRECT | https://registry.npmjs.org/@vitejs/plugin-react/-/plugin-react-5.2.0.tgz |
-| @vitest/expect | 2.1.9 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@vitest/expect/-/expect-2.1.9.tgz |
-| @vitest/mocker | 2.1.9 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@vitest/mocker/-/mocker-2.1.9.tgz |
-| @vitest/pretty-format | 2.1.9 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-2.1.9.tgz |
-| @vitest/runner | 2.1.9 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@vitest/runner/-/runner-2.1.9.tgz |
-| @vitest/snapshot | 2.1.9 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@vitest/snapshot/-/snapshot-2.1.9.tgz |
-| @vitest/spy | 2.1.9 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@vitest/spy/-/spy-2.1.9.tgz |
-| @vitest/utils | 2.1.9 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@vitest/utils/-/utils-2.1.9.tgz |
+| @vitest/mocker | 5.0.3 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@vitest/mocker/-/mocker-5.0.3.tgz |
+| @vitest/spy | 5.0.3 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/@vitest/spy/-/spy-5.0.3.tgz |
 | ansi-regex | 5.0.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/ansi-regex/-/ansi-regex-5.0.1.tgz |
 | ansi-styles | 5.2.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/ansi-styles/-/ansi-styles-5.2.0.tgz |
 | aria-query | 5.3.0 | Apache-2.0 | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/aria-query/-/aria-query-5.3.0.tgz |
@@ -198,10 +149,8 @@ This is a lockfile inventory, not a legal opinion. Missing npm license metadata 
 | baseline-browser-mapping | 2.11.25 | Apache-2.0 | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.11.25.tgz |
 | bidi-js | 1.1.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/bidi-js/-/bidi-js-1.1.0.tgz |
 | browserslist | 4.29.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/browserslist/-/browserslist-4.29.0.tgz |
-| cac | 6.7.14 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/cac/-/cac-6.7.14.tgz |
 | caniuse-lite | 1.0.30001810 | CC-BY-4.0 | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001810.tgz |
-| chai | 5.3.3 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/chai/-/chai-5.3.3.tgz |
-| check-error | 2.1.3 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/check-error/-/check-error-2.1.3.tgz |
+| chai | 6.3.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/chai/-/chai-6.3.0.tgz |
 | class-variance-authority | 0.7.1 | Apache-2.0 | Frontend variant class helper | DIRECT | https://registry.npmjs.org/class-variance-authority/-/class-variance-authority-0.7.1.tgz |
 | clsx | 2.1.1 | MIT | Frontend class name helper | DIRECT | https://registry.npmjs.org/clsx/-/clsx-2.1.1.tgz |
 | convert-source-map | 2.0.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/convert-source-map/-/convert-source-map-2.0.0.tgz |
@@ -212,7 +161,6 @@ This is a lockfile inventory, not a legal opinion. Missing npm license metadata 
 | data-urls | 7.0.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/data-urls/-/data-urls-7.0.0.tgz |
 | debug | 4.4.3 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/debug/-/debug-4.4.3.tgz |
 | decimal.js | 10.6.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/decimal.js/-/decimal.js-10.6.0.tgz |
-| deep-eql | 5.0.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/deep-eql/-/deep-eql-5.0.2.tgz |
 | dequal | 2.0.3 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/dequal/-/dequal-2.0.3.tgz |
 | detect-libc | 2.1.2 | Apache-2.0 | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/detect-libc/-/detect-libc-2.1.2.tgz |
 | dom-accessibility-api | 0.5.16 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/dom-accessibility-api/-/dom-accessibility-api-0.5.16.tgz |
@@ -220,9 +168,7 @@ This is a lockfile inventory, not a legal opinion. Missing npm license metadata 
 | electron-to-chromium | 1.5.433 | ISC | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.433.tgz |
 | enhanced-resolve | 5.25.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/enhanced-resolve/-/enhanced-resolve-5.25.1.tgz |
 | entities | 8.1.0 | BSD-2-Clause | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/entities/-/entities-8.1.0.tgz |
-| es-module-lexer | 1.7.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/es-module-lexer/-/es-module-lexer-1.7.0.tgz |
-| esbuild | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/esbuild/-/esbuild-0.21.5.tgz |
-| esbuild | 0.21.5 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/esbuild/-/esbuild-0.21.5.tgz |
+| es-module-lexer | 2.3.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/es-module-lexer/-/es-module-lexer-2.3.2.tgz |
 | esbuild | 0.28.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/esbuild/-/esbuild-0.28.2.tgz |
 | escalade | 3.2.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/escalade/-/escalade-3.2.0.tgz |
 | estree-walker | 3.0.3 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/estree-walker/-/estree-walker-3.0.3.tgz |
@@ -252,7 +198,6 @@ This is a lockfile inventory, not a legal opinion. Missing npm license metadata 
 | lightningcss-linux-x64-musl | 1.32.0 | MPL-2.0 | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/lightningcss-linux-x64-musl/-/lightningcss-linux-x64-musl-1.32.0.tgz |
 | lightningcss-win32-arm64-msvc | 1.32.0 | MPL-2.0 | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/lightningcss-win32-arm64-msvc/-/lightningcss-win32-arm64-msvc-1.32.0.tgz |
 | lightningcss-win32-x64-msvc | 1.32.0 | MPL-2.0 | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.32.0.tgz |
-| loupe | 3.2.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/loupe/-/loupe-3.2.1.tgz |
 | lru-cache | 11.5.3 | BlueOak-1.0.0 | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/lru-cache/-/lru-cache-11.5.3.tgz |
 | lru-cache | 11.5.3 | BlueOak-1.0.0 | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/lru-cache/-/lru-cache-11.5.3.tgz |
 | lru-cache | 11.5.3 | BlueOak-1.0.0 | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/lru-cache/-/lru-cache-11.5.3.tgz |
@@ -260,15 +205,16 @@ This is a lockfile inventory, not a legal opinion. Missing npm license metadata 
 | lucide-react | 0.468.0 | ISC | Frontend icons | DIRECT | https://registry.npmjs.org/lucide-react/-/lucide-react-0.468.0.tgz |
 | lz-string | 1.5.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/lz-string/-/lz-string-1.5.0.tgz |
 | magic-string | 0.30.21 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/magic-string/-/magic-string-0.30.21.tgz |
+| magic-string | 1.4.3 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/magic-string/-/magic-string-1.4.3.tgz |
+| magic-string | 1.4.3 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/magic-string/-/magic-string-1.4.3.tgz |
 | mdn-data | 2.27.1 | CC0-1.0 | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/mdn-data/-/mdn-data-2.27.1.tgz |
 | meshoptimizer | 1.1.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/meshoptimizer/-/meshoptimizer-1.1.1.tgz |
 | min-indent | 1.0.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/min-indent/-/min-indent-1.0.1.tgz |
 | ms | 2.1.3 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/ms/-/ms-2.1.3.tgz |
 | nanoid | 3.3.18 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/nanoid/-/nanoid-3.3.18.tgz |
 | node-releases | 2.0.56 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/node-releases/-/node-releases-2.0.56.tgz |
+| obug | 2.2.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/obug/-/obug-2.2.1.tgz |
 | parse5 | 8.0.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/parse5/-/parse5-8.0.1.tgz |
-| pathe | 1.1.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/pathe/-/pathe-1.1.2.tgz |
-| pathval | 2.0.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/pathval/-/pathval-2.0.1.tgz |
 | picocolors | 1.1.1 | ISC | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/picocolors/-/picocolors-1.1.1.tgz |
 | picomatch | 4.0.7 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/picomatch/-/picomatch-4.0.7.tgz |
 | playwright | 1.63.0 | Apache-2.0 | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/playwright/-/playwright-1.63.0.tgz |
@@ -289,42 +235,33 @@ This is a lockfile inventory, not a legal opinion. Missing npm license metadata 
 | scheduler | 0.28.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/scheduler/-/scheduler-0.28.0.tgz |
 | semver | 6.3.1 | ISC | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/semver/-/semver-6.3.1.tgz |
 | set-cookie-parser | 2.7.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/set-cookie-parser/-/set-cookie-parser-2.7.2.tgz |
-| siginfo | 2.0.0 | ISC | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/siginfo/-/siginfo-2.0.0.tgz |
-| source-map-js | 1.2.1 | BSD-3-Clause | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz |
-| stackback | 0.0.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/stackback/-/stackback-0.0.2.tgz |
-| std-env | 3.10.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/std-env/-/std-env-3.10.0.tgz |
+| source-map-js | 1.2.2 | BSD-3-Clause | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz |
+| std-env | 4.3.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/std-env/-/std-env-4.3.0.tgz |
 | strip-indent | 3.0.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/strip-indent/-/strip-indent-3.0.0.tgz |
 | tailwind-merge | 3.7.0 | MIT | Frontend class name merge helper | DIRECT | https://registry.npmjs.org/tailwind-merge/-/tailwind-merge-3.7.0.tgz |
 | tailwindcss | 4.3.3 | MIT | Frontend CSS framework | DIRECT | https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.3.3.tgz |
 | tapable | 2.3.3 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tapable/-/tapable-2.3.3.tgz |
 | three | 0.186.1 | MIT | 3D loading and offline GIS rendering | DIRECT | https://registry.npmjs.org/three/-/three-0.186.1.tgz |
-| tinybench | 2.9.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tinybench/-/tinybench-2.9.0.tgz |
-| tinyexec | 0.3.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tinyexec/-/tinyexec-0.3.2.tgz |
+| tinybench | 6.2.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tinybench/-/tinybench-6.2.2.tgz |
+| tinyexec | 1.3.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tinyexec/-/tinyexec-1.3.1.tgz |
 | tinyglobby | 0.2.17 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tinyglobby/-/tinyglobby-0.2.17.tgz |
-| tinypool | 1.1.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tinypool/-/tinypool-1.1.1.tgz |
-| tinyrainbow | 1.2.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tinyrainbow/-/tinyrainbow-1.2.0.tgz |
-| tinyspy | 3.0.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tinyspy/-/tinyspy-3.0.2.tgz |
 | tldts | 7.4.13 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tldts/-/tldts-7.4.13.tgz |
 | tldts-core | 7.4.13 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tldts-core/-/tldts-core-7.4.13.tgz |
 | tough-cookie | 6.0.2 | BSD-3-Clause | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tough-cookie/-/tough-cookie-6.0.2.tgz |
 | tr46 | 6.0.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tr46/-/tr46-6.0.0.tgz |
 | tslib | 2.8.1 | 0BSD | Transitive dependency; this repository does not select it directly | TRANSITIVE | package-lock.json |
-| tslib | 2.8.1 | 0BSD | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz |
 | typescript | 5.9.3 | Apache-2.0 | Typechecker and compiler | DIRECT | https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz |
 | undici | 8.10.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/undici/-/undici-8.10.2.tgz |
 | undici-types | 7.18.2 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/undici-types/-/undici-types-7.18.2.tgz |
 | update-browserslist-db | 1.3.3 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/update-browserslist-db/-/update-browserslist-db-1.3.3.tgz |
-| vite | 5.4.21 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/vite/-/vite-5.4.21.tgz |
-| vite | 5.4.21 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/vite/-/vite-5.4.21.tgz |
 | vite | 7.3.6 | MIT | Frontend dev server and build tool | DIRECT | https://registry.npmjs.org/vite/-/vite-7.3.6.tgz |
-| vite-node | 2.1.9 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/vite-node/-/vite-node-2.1.9.tgz |
-| vitest | 2.1.9 | MIT | Test runner | DIRECT | https://registry.npmjs.org/vitest/-/vitest-2.1.9.tgz |
+| vitest | 5.0.3 | MIT | Test runner | DIRECT | https://registry.npmjs.org/vitest/-/vitest-5.0.3.tgz |
 | w3c-xmlserializer | 5.0.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/w3c-xmlserializer/-/w3c-xmlserializer-5.0.0.tgz |
 | webidl-conversions | 8.0.1 | BSD-2-Clause | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-8.0.1.tgz |
 | whatwg-mimetype | 5.0.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/whatwg-mimetype/-/whatwg-mimetype-5.0.0.tgz |
 | whatwg-url | 16.0.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/whatwg-url/-/whatwg-url-16.0.1.tgz |
 | whatwg-url | 17.1.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/whatwg-url/-/whatwg-url-17.1.1.tgz |
-| why-is-node-running | 2.3.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/why-is-node-running/-/why-is-node-running-2.3.0.tgz |
+| why-is-node-running | 3.2.1 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/why-is-node-running/-/why-is-node-running-3.2.1.tgz |
 | xml-name-validator | 5.0.0 | Apache-2.0 | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/xml-name-validator/-/xml-name-validator-5.0.0.tgz |
 | xmlchars | 2.2.0 | MIT | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/xmlchars/-/xmlchars-2.2.0.tgz |
 | yallist | 3.1.1 | ISC | Transitive dependency; this repository does not select it directly | TRANSITIVE | https://registry.npmjs.org/yallist/-/yallist-3.1.1.tgz |
